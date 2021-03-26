@@ -1,11 +1,11 @@
-package de.unistuttgart.t2.common.commands;
+package de.unistuttgart.t2.common.commands.order;
 
-public class RejectOrderCommand extends OrderCommand {
+public class OrderCompensation extends OrderCommand {
 	private String orderId;
 	
-	public RejectOrderCommand() {}
+	public OrderCompensation() {}
 
-	public RejectOrderCommand(String orderId) {
+	public OrderCompensation(String orderId) {
 		super();
 		this.orderId = orderId;
 	}
