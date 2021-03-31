@@ -4,31 +4,40 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class CartContent {
-	private Map<String, Integer> products;
+	@JsonProperty("content")
+	private Map<String, Integer> content;
 
 	public CartContent() {
 		super();
-		this.products = new HashMap<>();
+		this.content = new HashMap<>();
 	}
 
-	public CartContent(Map<String, Integer> products) {
+	@JsonCreator
+	public CartContent(Map<String, Integer> content) {
 		super();
-		this.products = products;
+		this.content = content;
 	}
 
-	public void setProducts(Map<String, Integer> products) {
-		this.products = products;
+	public void setContent(Map<String, Integer> content) {
+		this.content = content;
 	}
 	
-	public Collection<String> getProducts(){
-		return products.keySet();
+	public Map<String, Integer> getContent() {
+		return content;
+	}
+	
+	public Collection<String> getProductIds(){
+		return content.keySet();
 	}
 	
 	public Integer getUnits(String productId) {
-		if (!products.containsKey(productId)) {
+		if (!content.containsKey(productId)) {
 			return 0;
 		} 
-		return products.get(productId);
+		return content.get(productId);
 	}
 }

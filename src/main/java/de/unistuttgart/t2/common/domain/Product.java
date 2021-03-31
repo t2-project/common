@@ -1,5 +1,8 @@
 package de.unistuttgart.t2.common.domain;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * A product as sold by the store.
  * 
@@ -7,18 +10,34 @@ package de.unistuttgart.t2.common.domain;
  *
  */
 public class Product {
-	
+	@JsonProperty("id")
 	private String id;
+	@JsonProperty("name")
 	private String name;
+	@JsonProperty("description")
+	private String desription;
+	@JsonProperty("units")
 	private int units;
+	@JsonProperty("price")
 	private double price;
 	
 	public Product() {	}
 
-	public Product(String id, String name, int units, double price) {
+	@JsonCreator
+	public Product(@JsonProperty("id") String id, @JsonProperty("name") String name, @JsonProperty("description") String desription, @JsonProperty("units") int units, @JsonProperty("price") double price) {
 		super();
 		this.id = id;
 		this.name = name;
+		this.desription = desription;
+		this.units = units;
+		this.price = price;
+	}
+	
+	
+	public Product(String name, String desription, int units, double price) {
+		super();
+		this.name = name;
+		this.desription = desription;
 		this.units = units;
 		this.price = price;
 	}
@@ -34,6 +53,12 @@ public class Product {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	public String getDescription() {
+		return desription;
+	}
+	public void setDescription(String desription) {
+		this.desription = desription;
 	}
 	public int getUnits() {
 		return units;
