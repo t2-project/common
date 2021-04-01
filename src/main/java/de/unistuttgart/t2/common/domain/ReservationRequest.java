@@ -3,6 +3,12 @@ package de.unistuttgart.t2.common.domain;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * to be passed from ui backend to inventory.
+ * 
+ * @author maumau
+ *
+ */
 public class ReservationRequest {
 	
 	@JsonProperty("productId")
@@ -14,7 +20,6 @@ public class ReservationRequest {
 	
 	public ReservationRequest() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	@JsonCreator
@@ -36,6 +41,4 @@ public class ReservationRequest {
 	public int getUnits() {
 		return units;
 	}
-	
-	
 }

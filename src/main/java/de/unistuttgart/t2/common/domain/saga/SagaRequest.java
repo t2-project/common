@@ -4,13 +4,14 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * all the Data, that any saga participant might possibly need. but for passing
+ * all the Data, that any saga participant might possibly need. for passing
  * from uibackend to orchestrator
  * 
- * this is a seperate class eventhough the content is literally the same as in
- * SagaData such that i can change the communication backend - orchestrator and
- * orchestrator - participants independently of each other. also i dont want to
- * pollute my saga data with those json annotations.
+ * this is a separate class even though the content is literally the same as in
+ * {@linkplain SagaData} such that i can change the communication backend - orchestrator and
+ * orchestrator - participants independently of each other. 
+ * 
+ * also i dont want to clutter my saga data with those json annotations.
  */
 public class SagaRequest {
 
@@ -83,5 +84,4 @@ public class SagaRequest {
 	public void setTotal(double total) {
 		this.total = total;
 	}
-
 }

@@ -1,7 +1,5 @@
 package de.unistuttgart.t2.common.domain.saga;
 
-import java.util.Map;
-
 /**
  * all the Data, that any saga participant might possibly need.
  * 

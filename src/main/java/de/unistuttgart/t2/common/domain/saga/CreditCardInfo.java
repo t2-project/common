@@ -3,7 +3,7 @@ package de.unistuttgart.t2.common.domain.saga;
 /**
  * All the informations usually found on a creditcard.
  * 
- * Supposed to be part of the SagaData
+ * part of the SagaData
  * 
  * @author maumau
  *

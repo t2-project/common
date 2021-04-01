@@ -4,7 +4,7 @@ import de.unistuttgart.t2.common.domain.saga.SagaData;
 
 
 /** 
- * signals a saga participant to take an action. 
+ * command that makes saga participant take an action. 
  * 
  * @author maumau
  *

@@ -7,6 +7,15 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+
+/**
+ * content of a users shopping cart
+ * 
+ * to be passed from cart to ui backend and vice versa.
+ * 
+ * @author maumau
+ *
+ */
 public class CartContent {
 	@JsonProperty("content")
 	private Map<String, Integer> content;

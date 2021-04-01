@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * A product as sold by the store.
+ * a product as sold by the store.
+ * 
+ * to be passed from inventory to ui backend.
  * 
  * @author maumau
  *
