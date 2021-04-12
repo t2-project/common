@@ -1,4 +1,4 @@
-package de.unistuttgart.t2.common.domain.saga;
+package de.unistuttgart.t2.common.saga;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

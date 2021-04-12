@@ -1,6 +1,6 @@
-package de.unistuttgart.t2.common.commands;
+package de.unistuttgart.t2.common.saga.commands;
 
-import de.unistuttgart.t2.common.domain.saga.SagaData;
+import de.unistuttgart.t2.common.saga.SagaData;
 
 
 /** 
@@ -12,6 +12,10 @@ import de.unistuttgart.t2.common.domain.saga.SagaData;
 public class ActionCommand extends SagaCommand{
 	public ActionCommand(SagaData data) {
 		super(data);
+	}
+	
+	public ActionCommand() {
+		super();
 	}
 	
 

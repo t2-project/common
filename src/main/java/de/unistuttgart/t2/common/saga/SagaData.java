@@ -1,4 +1,4 @@
-package de.unistuttgart.t2.common.domain.saga;
+package de.unistuttgart.t2.common.saga;
 
 /**
  * all the Data, that any saga participant might possibly need.
@@ -25,7 +25,9 @@ package de.unistuttgart.t2.common.domain.saga;
 public class SagaData {
 	
 	// for payment
-	private CreditCardInfo creditCardInfo;
+	private String cardNumber;
+	private String cardOwner;
+	private String checksum;
 	
 	// identify user (at inventory)
 	private String sessionId;
@@ -38,39 +40,49 @@ public class SagaData {
 	// cart content (things that were bought and how many of them) 
 		// actually... no. because no one cares. 
 
-	public SagaData(CreditCardInfo creditCardInfo, String sessionId, String orderId, double total) {
+	public SagaData(String cardNumber, String cardOwner, String checksum, String sessionId, String orderId, double total) {
 		super();
-		this.creditCardInfo = creditCardInfo;
+		this.cardNumber = cardNumber;
+		this.cardOwner = cardOwner;
+		this.checksum = checksum;
 		this.sessionId = sessionId;
 		this.orderId = orderId;
 		this.total = total;
 	}
 	
-	public SagaData(CreditCardInfo creditCardInfo, String sessionId, double total) {
+	public SagaData(String cardNumber, String cardOwner, String checksum, String sessionId, double total) {
 		super();
-		this.creditCardInfo = creditCardInfo;
+		this.cardNumber = cardNumber;
+		this.cardOwner = cardOwner;
+		this.checksum = checksum;
 		this.sessionId = sessionId;
 		this.total = total;
 	}
 	
+	public SagaData() {
+		super();
+	}
+	
 	
 
-	public CreditCardInfo getCreditCardInfo() {
-		return creditCardInfo;
+	public String getCardNumber() {
+		return cardNumber;
 	}
-
+	public String getCardOwner() {
+		return cardOwner;
+	}
+	public String getChecksum() {
+		return checksum;
+	}
 	public String getSessionId() {
 		return sessionId;
 	}
-
 	public String getOrderId() {
 		return orderId;
 	}
-
 	public double getTotal() {
 		return total;
 	}
-	
 	public void setOrderId(String orderId) {
 		this.orderId = orderId;
 	}

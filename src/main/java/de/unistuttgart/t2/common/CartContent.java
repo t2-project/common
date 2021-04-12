@@ -1,4 +1,4 @@
-package de.unistuttgart.t2.common.domain;
+package de.unistuttgart.t2.common;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * content of a users shopping cart
  * 
- * to be passed from cart to ui backend and vice versa.
+ * to be passed from cart to ui backend to ui and vice versa.
  * 
  * @author maumau
  *

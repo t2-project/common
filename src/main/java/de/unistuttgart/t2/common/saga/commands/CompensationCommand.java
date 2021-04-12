@@ -1,6 +1,6 @@
-package de.unistuttgart.t2.common.commands;
+package de.unistuttgart.t2.common.saga.commands;
 
-import de.unistuttgart.t2.common.domain.saga.SagaData;
+import de.unistuttgart.t2.common.saga.SagaData;
 
 /**
  * command that makes saga participant execute a compensation
@@ -12,5 +12,8 @@ public class CompensationCommand extends SagaCommand{
 	public CompensationCommand(SagaData data) {
 		super(data);
 	}
-
+	
+	public CompensationCommand() {
+		super();
+	}
 }

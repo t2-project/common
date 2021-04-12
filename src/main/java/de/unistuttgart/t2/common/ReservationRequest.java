@@ -1,4 +1,4 @@
-package de.unistuttgart.t2.common.domain;
+package de.unistuttgart.t2.common;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

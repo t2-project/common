@@ -1,6 +1,6 @@
-package de.unistuttgart.t2.common.commands;
+package de.unistuttgart.t2.common.saga.commands;
 
-import de.unistuttgart.t2.common.domain.saga.SagaData;
+import de.unistuttgart.t2.common.saga.SagaData;
 import io.eventuate.tram.commands.common.Command;
 
 /**
@@ -22,8 +22,14 @@ public abstract class SagaCommand implements Command {
 	public SagaCommand(SagaData data) {
 		this.data = data;
 	}
+	
+	public SagaCommand() {	}
 
 	public SagaData getData() {
 		return data;
+	}
+	
+	public void setData(SagaData data) {
+		this.data = data;
 	}
 }

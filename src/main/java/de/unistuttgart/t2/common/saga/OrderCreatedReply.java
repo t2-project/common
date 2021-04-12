@@ -1,4 +1,4 @@
-package de.unistuttgart.t2.common.replies;
+package de.unistuttgart.t2.common.saga;
 
 /**
  * reply from order service to orchestrator, such that the orchestrator now
@@ -7,14 +7,14 @@ package de.unistuttgart.t2.common.replies;
  * @author maumau
  *
  */
-public class OrderCreated {
+public class OrderCreatedReply {
 	private String id;
 
-	public OrderCreated() {
+	public OrderCreatedReply() {
 		super();
 	}
 
-	public OrderCreated(String id) {
+	public OrderCreatedReply(String id) {
 		super();
 		this.id = id;
 	}
