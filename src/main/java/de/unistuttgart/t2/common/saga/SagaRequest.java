@@ -84,4 +84,10 @@ public class SagaRequest {
 	public void setTotal(double total) {
 		this.total = total;
 	}
+	
+	@Override
+	public String toString() {
+		return String.format("SessionID : %s, Card : %s, %s, %s , Total : %f", sessionId, cardOwner, cardNumber, checksum, total);
+	}
+	
 }
