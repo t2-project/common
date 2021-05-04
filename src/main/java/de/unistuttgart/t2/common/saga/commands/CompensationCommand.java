@@ -8,12 +8,12 @@ import de.unistuttgart.t2.common.saga.SagaData;
  * @author maumau
  *
  */
-public class CompensationCommand extends SagaCommand{
-	public CompensationCommand(SagaData data) {
-		super(data);
-	}
-	
-	public CompensationCommand() {
-		super();
-	}
+public class CompensationCommand extends SagaCommand {
+    public CompensationCommand(SagaData data) {
+        super(data);
+    }
+
+    public CompensationCommand() {
+        super();
+    }
 }

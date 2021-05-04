@@ -13,23 +13,24 @@ import io.eventuate.tram.commands.common.Command;
  *
  */
 public abstract class SagaCommand implements Command {
-	public static final String inventory = "inventory";
-	public static final String payment = "payment";
-	public static final String order = "order";
+    public static final String inventory = "inventory";
+    public static final String payment = "payment";
+    public static final String order = "order";
 
-	private SagaData data;
+    private SagaData data;
 
-	public SagaCommand(SagaData data) {
-		this.data = data;
-	}
-	
-	public SagaCommand() {	}
+    public SagaCommand(SagaData data) {
+        this.data = data;
+    }
 
-	public SagaData getData() {
-		return data;
-	}
-	
-	public void setData(SagaData data) {
-		this.data = data;
-	}
+    public SagaCommand() {
+    }
+
+    public SagaData getData() {
+        return data;
+    }
+
+    public void setData(SagaData data) {
+        this.data = data;
+    }
 }

@@ -10,35 +10,35 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  */
 public class ReservationRequest {
-	
-	@JsonProperty("productId")
-	private String productId;
-	@JsonProperty("sessionId")
-	private String sessionId;
-	@JsonProperty("units")
-	private int units;
-	
-	public ReservationRequest() {
-		super();
-	}
 
-	@JsonCreator
-	public ReservationRequest(String productId, String sessionId, int units) {
-		super();
-		this.productId = productId;
-		this.sessionId = sessionId;
-		this.units = units;
-	}
+    @JsonProperty("productId")
+    private String productId;
+    @JsonProperty("sessionId")
+    private String sessionId;
+    @JsonProperty("units")
+    private int units;
 
-	public String getProductId() {
-		return productId;
-	}
+    public ReservationRequest() {
+        super();
+    }
 
-	public String getSessionId() {
-		return sessionId;
-	}
+    @JsonCreator
+    public ReservationRequest(String productId, String sessionId, int units) {
+        super();
+        this.productId = productId;
+        this.sessionId = sessionId;
+        this.units = units;
+    }
 
-	public int getUnits() {
-		return units;
-	}
+    public String getProductId() {
+        return productId;
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public int getUnits() {
+        return units;
+    }
 }

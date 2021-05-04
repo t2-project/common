@@ -8,22 +8,22 @@ package de.unistuttgart.t2.common.saga;
  *
  */
 public class OrderCreatedReply {
-	private String id;
+    private String id;
 
-	public OrderCreatedReply() {
-		super();
-	}
+    public OrderCreatedReply() {
+        super();
+    }
 
-	public OrderCreatedReply(String id) {
-		super();
-		this.id = id;
-	}
+    public OrderCreatedReply(String id) {
+        super();
+        this.id = id;
+    }
 
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 }
