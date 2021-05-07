@@ -14,7 +14,7 @@ jobs:
       with:
         distribution: 'adopt'
         java-version: '11'
-    - name: export envs
-      run: export TRAM_VERSION=${{test.TRAM_VERSION}}
+    - name: source envs
+      run: . ./setenv.sh
     - name: verify common
       run: echo $TRAM_VERSION && mvn clean verify
