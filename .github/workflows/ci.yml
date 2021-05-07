@@ -14,7 +14,5 @@ jobs:
       with:
         distribution: 'adopt'
         java-version: '11'
-    - name: source envs
-      run: . ./setenv.sh
     - name: verify common
-      run: echo $TRAM_VERSION && mvn clean verify
+      run: . ./setenv.sh && echo $TRAM_VERSION && mvn clean verify
