@@ -4,7 +4,15 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * to be passed from ui to the ui backend.
+ * Request to order all Items in a users cart.
+ * 
+ * <p>
+ * Holds the payment information only. The products to be ordered will be
+ * retrieved from the cart service, and the sessionId is in that session object
+ * that is always there.
+ * 
+ * <p>
+ * Used to communicate from UI to UIBackend.
  * 
  * @author maumau
  *

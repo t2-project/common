@@ -4,7 +4,14 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * to be passed from ui backend to inventory.
+ * Request to place a reservation on a product.
+ * 
+ * <p>
+ * This request if for reservation of single product. If you want to place
+ * reservations on multiple products you have to request one after another.
+ * 
+ * <p>
+ * Used to communicate with the inventory service.
  * 
  * @author maumau
  *

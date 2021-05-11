@@ -1,8 +1,9 @@
 package de.unistuttgart.t2.common.saga;
 
 /**
- * reply from order service to orchestrator, such that the orchestrator now
- * knows the id of the created order
+ *
+ * Reply that tells the orchestrator, under which id the order service created a
+ * new order.
  * 
  * @author maumau
  *

@@ -3,7 +3,7 @@ package de.unistuttgart.t2.common.saga.commands;
 import de.unistuttgart.t2.common.saga.SagaData;
 
 /**
- * command that makes saga participant take an action.
+ * A command that makes a saga participant perform an action.
  * 
  * @author maumau
  *
@@ -16,5 +16,4 @@ public class ActionCommand extends SagaCommand {
     public ActionCommand() {
         super();
     }
-
 }
