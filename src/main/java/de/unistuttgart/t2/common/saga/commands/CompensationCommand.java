@@ -3,7 +3,7 @@ package de.unistuttgart.t2.common.saga.commands;
 import de.unistuttgart.t2.common.saga.SagaData;
 
 /**
- * command that makes saga participant execute a compensation
+ * A command that makes a saga participant perfomr a compensation.
  * 
  * @author maumau
  *

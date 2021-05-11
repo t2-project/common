@@ -1,21 +1,34 @@
 package de.unistuttgart.t2.common.saga;
 
 /**
- * all the Data, that any saga participant might possibly need.
+ * All the Information that any saga participant might possibly need.
  * 
- * the other option would be, that each saga participant collects its data from
+ * <p>
+ * Payment wants:
+ * <ul>
+ * <li> the information usually found on a credit card 
+ * <li> the total money to pay
+ * </ul>
+ * 
+ * <p>
+ * Inventory wants:
+ * <ul>
+ * <li> the sessionId to identify the reservations to commit / delete. 
+ * </ul>
+ * 
+ * <p>
+ * Order wants:
+ * <ul> 
+ * <li> nothing really
+ * <li> but takes total and sessionId anyway.
+ * </ul>
+ * 
+ * <p>
+ * Another option would be, that each saga participant collects its data from
  * other services personally (e.g. payment again asks cart for which and what
- * quantity of items were bought), but that is a lot of communication effort,
- * thus biiig message.
- * 
- * Payment wants: - payment info (creditcard stuff) - total money
- * 
- * Inventory wants: - sessionid (to identify which reservations to delete) -
- * (maybe) total for verification
- * 
- * Order wants: - (nothing really) - but takes total, ordered units and products
- * and, session id anyway.
- * 
+ * quantity of items were bought), but that is a lot of communication effort. To
+ * avoid this there is just this one big messages, that contains all information
+ * and every one just picks what they need.
  * 
  */
 public class SagaData {

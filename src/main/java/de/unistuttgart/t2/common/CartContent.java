@@ -8,9 +8,14 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * content of a users shopping cart
+ * The content of a users shopping cart.
  * 
- * to be passed from cart to ui backend to ui and vice versa.
+ * <p>
+ * Holds the productIds of the products in the cart and how many units of each
+ * product are in the cart.
+ * 
+ * <p>
+ * Used to communicated with the cart service.
  * 
  * @author maumau
  *
@@ -20,13 +25,11 @@ public class CartContent {
     private Map<String, Integer> content;
 
     public CartContent() {
-        super();
-        this.content = new HashMap<>();
+        this(new HashMap<>());
     }
 
     @JsonCreator
     public CartContent(Map<String, Integer> content) {
-        super();
         this.content = content;
     }
 
@@ -38,15 +41,21 @@ public class CartContent {
         return content;
     }
 
+    /**
+     * Get the productIds of the products in this cart.
+     * 
+     * @return ids of all products in the cart
+     */
     public Collection<String> getProductIds() {
         return content.keySet();
     }
 
     /**
-     * get units of product with given id or zero if product not in the cart
+     * Get the number of units of a product with the given id or zero if the product is
+     * not in the cart.
      * 
-     * @param productId
-     * @return units of product with given id
+     * @param productId to identify the product
+     * @return number of units if the product is in the cart, zero otherwise
      */
     public Integer getUnits(String productId) {
         if (!content.containsKey(productId)) {

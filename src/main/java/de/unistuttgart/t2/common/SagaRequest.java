@@ -1,17 +1,20 @@
-package de.unistuttgart.t2.common.saga;
+package de.unistuttgart.t2.common;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * all the Data, that any saga participant might possibly need. for passing from
- * uibackend to orchestrator
  * 
- * this is a separate class even though the content is literally the same as in
- * {@linkplain SagaData} such that i can change the communication backend -
- * orchestrator and orchestrator - participants independently of each other.
+ * Request to start a saga.
  * 
- * also i dont want to clutter my saga data with those json annotations.
+ * <p>
+ * Holds all the information that are necessary for the saga. That is
+ * information about the payment method and the costs, and the sessionId to
+ * identify the users. all the Data, that any saga participant might possibly
+ * 
+ * <p>
+ * Used to communicate with the orchestrator service.
+ * 
  */
 public class SagaRequest {
 
@@ -23,7 +26,7 @@ public class SagaRequest {
     @JsonProperty("checksum")
     private String checksum;
 
-    // identify user (at inventory)
+    // identify user
     @JsonProperty("sessionId")
     private String sessionId;
 
@@ -49,40 +52,20 @@ public class SagaRequest {
         return cardNumber;
     }
 
-    public void setCardNumber(String cardNumber) {
-        this.cardNumber = cardNumber;
-    }
-
     public String getCardOwner() {
         return cardOwner;
-    }
-
-    public void setCardOwner(String cardOwner) {
-        this.cardOwner = cardOwner;
     }
 
     public String getChecksum() {
         return checksum;
     }
 
-    public void setChecksum(String checksum) {
-        this.checksum = checksum;
-    }
-
     public String getSessionId() {
         return sessionId;
     }
 
-    public void setSessionId(String sessionId) {
-        this.sessionId = sessionId;
-    }
-
     public double getTotal() {
         return total;
-    }
-
-    public void setTotal(double total) {
-        this.total = total;
     }
 
     @Override

@@ -4,9 +4,19 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * a product as sold by the store.
+ * A single product in the store.
  * 
- * to be passed from inventory to ui backend.
+ * <p>
+ * Depending on the context the product is used in, the {@code units} represent
+ * different things:
+ * <ul>
+ * <li>reservations : reserved number of units of that product
+ * <li>inventory : available number of units in the inventory
+ * <li>cart : number of units in the cart
+ * </ul>
+ * 
+ * <p>
+ * Used to communicate from UI to UIBackend to inventory.
  * 
  * @author maumau
  *
@@ -85,5 +95,4 @@ public class Product {
     public void setPrice(double price) {
         this.price = price;
     }
-
 }
