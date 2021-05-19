@@ -56,6 +56,10 @@ public class SagaRequest {
         return cardOwner;
     }
 
+    public void setChecksum(String checksum) {
+        this.checksum = checksum;
+    }
+    
     public String getChecksum() {
         return checksum;
     }

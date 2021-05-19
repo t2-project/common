@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -46,6 +47,7 @@ public class CartContent {
      * 
      * @return ids of all products in the cart
      */
+    @JsonIgnore
     public Collection<String> getProductIds() {
         return content.keySet();
     }
@@ -57,6 +59,7 @@ public class CartContent {
      * @param productId to identify the product
      * @return number of units if the product is in the cart, zero otherwise
      */
+    @JsonIgnore
     public Integer getUnits(String productId) {
         if (!content.containsKey(productId)) {
             return 0;
