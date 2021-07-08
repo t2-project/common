@@ -1,5 +1,7 @@
 package de.unistuttgart.t2.common.saga;
 
+import java.util.Map;
+
 /**
  * All the Information that any saga participant might possibly need.
  * 
@@ -45,12 +47,15 @@ public class SagaData {
 
     // costs
     private double total;
+    
+    // for tracing only
+    private Map<String, String> traceContext;
 
     // cart content (things that were bought and how many of them)
     // actually... no. because no one cares.
 
     public SagaData(String cardNumber, String cardOwner, String checksum, String sessionId, String orderId,
-            double total) {
+            double total, Map<String, String> traceContext) {
         super();
         this.cardNumber = cardNumber;
         this.cardOwner = cardOwner;
@@ -58,6 +63,7 @@ public class SagaData {
         this.sessionId = sessionId;
         this.orderId = orderId;
         this.total = total;
+        this.traceContext = traceContext;
     }
 
     public SagaData(String cardNumber, String cardOwner, String checksum, String sessionId, double total) {
@@ -95,6 +101,14 @@ public class SagaData {
 
     public double getTotal() {
         return total;
+    }
+
+    public Map<String, String> getTraceContext() {
+        return traceContext;
+    }
+
+    public void setTraceContext(Map<String, String> traceContext) {
+        this.traceContext = traceContext;
     }
 
     public void setOrderId(String orderId) {

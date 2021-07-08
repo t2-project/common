@@ -19,15 +19,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ReservationRequest {
 
     @JsonProperty("productId")
-    private String productId;
+    private final String productId;
     @JsonProperty("sessionId")
-    private String sessionId;
+    private final String sessionId;
     @JsonProperty("units")
-    private int units;
-
-    public ReservationRequest() {
-        super();
-    }
+    private final int units;
 
     @JsonCreator
     public ReservationRequest(String productId, String sessionId, int units) {

@@ -20,15 +20,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class OrderRequest {
 
     @JsonProperty("cardNumber")
-    private String cardNumber;
+    private final  String cardNumber;
     @JsonProperty("cardOwner")
-    private String cardOwner;
+    private final String cardOwner;
     @JsonProperty("checksum")
-    private String checksum;
-
-    public OrderRequest() {
-        super();
-    }
+    private final String checksum;
 
     @JsonCreator
     public OrderRequest(String cardNumber, String cardOwner, String checksum) {

@@ -20,23 +20,19 @@ public class SagaRequest {
 
     // for payment
     @JsonProperty("cardNumber")
-    private String cardNumber;
+    private final String cardNumber;
     @JsonProperty("cardOwner")
-    private String cardOwner;
+    private final String cardOwner;
     @JsonProperty("checksum")
-    private String checksum;
+    private final String checksum;
 
     // identify user
     @JsonProperty("sessionId")
-    private String sessionId;
+    private final String sessionId;
 
     // costs
     @JsonProperty("total")
-    private double total;
-
-    public SagaRequest() {
-        super();
-    }
+    private final double total;
 
     @JsonCreator
     public SagaRequest(String sessionId, String cardNumber, String cardOwner, String checksum, double total) {
@@ -54,10 +50,6 @@ public class SagaRequest {
 
     public String getCardOwner() {
         return cardOwner;
-    }
-
-    public void setChecksum(String checksum) {
-        this.checksum = checksum;
     }
     
     public String getChecksum() {
