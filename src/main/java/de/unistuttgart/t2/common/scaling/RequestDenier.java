@@ -1,0 +1,29 @@
+package de.unistuttgart.t2.common.scaling;
+
+import javax.servlet.http.*;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.servlet.HandlerInterceptor;
+
+/**
+ * Middleware to allow to deterministically trigger {@code SLO}s without having to shutdown the
+ * server.
+ *
+ * @author Leon Hofmeister
+ */
+public final class RequestDenier implements HandlerInterceptor {
+
+	private static volatile boolean blockRoutes;
+
+	@Override
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
+		Object handler) throws Exception {
+		if (blockRoutes)
+			response.sendError(HttpStatus.SERVICE_UNAVAILABLE.value());
+		return !blockRoutes;
+	}
+
+	public void shouldBlockAllRoutes(boolean block) {
+		blockRoutes = block;
+	}
+}
