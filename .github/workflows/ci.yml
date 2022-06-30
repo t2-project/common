@@ -14,6 +14,7 @@ jobs:
          echo "RESILIENCE4J_VERSION=${{secrets.RESILIENCE4J_VERSION}}" >> $GITHUB_ENV
          echo "JUNIT4_VERSION=${{secrets.JUNIT4_VERSION}}" >> $GITHUB_ENV
          echo "TRAM_PARTICIPANT_VERSION=${{secrets.TRAM_PARTICIPANT_VERSION}}" >> $GITHUB_ENV
+         echo "SPRINGDOC_VERSION=${{secrets.SPRINGDOC_VERSION}}" >> $GITHUB_ENV
     - name: check out common
       uses: actions/checkout@master
     - name: set up jdk
