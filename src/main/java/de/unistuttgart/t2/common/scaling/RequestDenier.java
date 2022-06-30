@@ -8,6 +8,11 @@ import org.springframework.web.servlet.HandlerInterceptor;
 /**
  * Middleware to allow to deterministically trigger {@code SLO}s without having to shutdown the
  * server.
+ * <p>
+ * This component has to ignore the principles of OOP programming as Spring does not seem to be able
+ * to autowire interceptors.<br>
+ * Also, in this case setting this globally makes sense as there is no reason to have a
+ * deterministic SLO that only affects part of the application.
  *
  * @author Leon Hofmeister
  */
@@ -23,7 +28,7 @@ public final class RequestDenier implements HandlerInterceptor {
 		return !blockRoutes;
 	}
 
-	public void shouldBlockAllRoutes(boolean block) {
+	public static void shouldBlockAllRoutes(boolean block) {
 		blockRoutes = block;
 	}
 }
