@@ -11,36 +11,34 @@ import org.junit.jupiter.api.Test;
  */
 public final class MemoryLeakerTest {
 
-	// Must be static to ensure that the initial memory calculation is correct
-	private static final MemoryLeaker	leaker				= new MemoryLeaker();
-	private final long					initialTotalMemory	= Runtime.getRuntime().totalMemory();
-	private final long					initialFreeMemory	= Runtime.getRuntime().freeMemory();
+	private final long	initialTotalMemory	= Runtime.getRuntime().totalMemory();
+	private final long	initialFreeMemory	= Runtime.getRuntime().freeMemory();
 
 	@Test
 	void testMemoryLeak() {
 
 		// More than half of the memory is still available
-		assertEquals(leaker.expectedMemoryPercentage, 0.0);
+		assertEquals(MemoryLeaker.expectedMemoryPercentage, 0.0);
 		assertTrue((double) initialFreeMemory / initialTotalMemory > 0.5);
-		final double expected = 0.6;
+		final double expectedPercentage = 0.6;
 
 		// Normal case
-		leaker.changeExpectedMemoryPercentage(expected);
-		assertEquals(leaker.expectedMemoryPercentage, expected);
+		MemoryLeaker.changeExpectedMemoryPercentage(expectedPercentage);
+		assertEquals(MemoryLeaker.expectedMemoryPercentage, expectedPercentage);
 
 		// The percentage of used memory is at least {expected}
 		final long	total	= Runtime.getRuntime().totalMemory();
 		final long	free	= Runtime.getRuntime().freeMemory();
 		final long	used	= total - free;
-		assertTrue((double) used / total >= expected);
+		assertTrue((double) used / total >= expectedPercentage);
 
 		// Nothing changes memory wise for 0.0
-		leaker.changeExpectedMemoryPercentage(0.0);
+		MemoryLeaker.changeExpectedMemoryPercentage(0.0);
 		assertEquals(total, Runtime.getRuntime().totalMemory());
 		assertEquals(free, Runtime.getRuntime().freeMemory());
 
 		// The memory gets freed for a negative value
-		leaker.clearMemoryLeak();
+		MemoryLeaker.clearMemoryLeak();
 		assertTrue(total >= Runtime.getRuntime().totalMemory());
 		assertTrue(used >= Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory());
 	}
