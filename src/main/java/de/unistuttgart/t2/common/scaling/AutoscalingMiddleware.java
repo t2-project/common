@@ -7,9 +7,9 @@ import org.springframework.web.servlet.config.annotation.*;
 @EnableWebMvc
 public class AutoscalingMiddleware implements WebMvcConfigurer {
 
-	@Override
-	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(new RequestDenier()).excludePathPatterns("/autoscaling/**");
-		registry.addInterceptor(new MemoryLeaker()).excludePathPatterns("/autoscaling/**");
-	}
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new RequestDenier()).excludePathPatterns("/autoscaling/**");
+        registry.addInterceptor(new MemoryLeaker()).excludePathPatterns("/autoscaling/**");
+    }
 }
