@@ -40,12 +40,13 @@ public final class MemoryLeaker implements HandlerInterceptor {
         if (expectedMemoryPercentage < 0) {
             memoryLeak.clear();
             System.gc();
-        } else if (expectedMemoryPercentage > 0)
+        } else if (expectedMemoryPercentage > 0) {
             do {
                 memoryLeak.add(Instant.now());
                 // i.e. 1 - 0.95 <= (20/100) -> allocate more memory
             } while (1 - expectedMemoryPercentage <= (double) runtime.freeMemory()
                 / runtime.totalMemory());
+        }
     }
 
     /**
@@ -60,11 +61,13 @@ public final class MemoryLeaker implements HandlerInterceptor {
      */
     public static void changeExpectedMemoryPercentage(double newPercentage)
         throws IllegalArgumentException {
-        if (newPercentage >= 100)
+        if (newPercentage >= 100) {
             throw new IllegalArgumentException(String
                 .format("Cannot request memory above 100%. You requested %.2f%%.", newPercentage));
-        if (newPercentage >= 1)
+        }
+        if (newPercentage >= 1) {
             newPercentage /= 100; // Has been passed as actual percentage, i.e. 56.5
+        }
         expectedMemoryPercentage = newPercentage;
         adaptMemory();
     }

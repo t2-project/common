@@ -22,8 +22,9 @@ public final class RequestDenier implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
         Object handler) throws Exception {
-        if (blockRoutes)
+        if (blockRoutes) {
             response.sendError(HttpStatus.SERVICE_UNAVAILABLE.value());
+        }
         return !blockRoutes;
     }
 
