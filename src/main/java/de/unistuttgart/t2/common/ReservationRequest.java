@@ -1,20 +1,16 @@
 package de.unistuttgart.t2.common;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 
 /**
  * Request to place a reservation on a product.
- * 
  * <p>
- * This request if for reservation of single product. If you want to place
- * reservations on multiple products you have to request one after another.
- * 
+ * This request if for reservation of single product. If you want to place reservations on multiple products you have to
+ * request one after another.
  * <p>
  * Used to communicate with the inventory service.
- * 
- * @author maumau
  *
+ * @author maumau
  */
 public class ReservationRequest {
 
@@ -27,7 +23,6 @@ public class ReservationRequest {
 
     @JsonCreator
     public ReservationRequest(String productId, String sessionId, int units) {
-        super();
         this.productId = productId;
         this.sessionId = sessionId;
         this.units = units;
