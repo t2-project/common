@@ -30,8 +30,9 @@ public class AutoscalingController {
     }
 
     @Operation(summary = "Ensures that consistently at least {memory}% is used", description = "values in range 0 < {memory} < 1 are treated the same as values in range 1 <= {memory} < 100", tags = "Memory")
-    @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Successfully demanded a memory usage of at least {memory}%"),
-                            @ApiResponse(responseCode = "400", description = "{memory} >= 100.0") })
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Successfully demanded a memory usage of at least {memory}%"),
+        @ApiResponse(responseCode = "400", description = "{memory} >= 100.0") })
     @PostMapping("/autoscaling/require-memory/{memory}")
     public void requireMemory(@PathVariable(name = "memory") double memory) {
         try {
