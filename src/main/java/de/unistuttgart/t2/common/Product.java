@@ -1,27 +1,23 @@
 package de.unistuttgart.t2.common;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 
 /**
  * A single product in the store.
- * 
  * <p>
- * Depending on the context the product is used in, the {@code units} represent
- * different things:
+ * Depending on the context the product is used in, the {@code units} represent different things:
  * <ul>
  * <li>reservations : reserved number of units of that product
  * <li>inventory : available number of units in the inventory
  * <li>cart : number of units of the product in the cart
  * </ul>
- * 
  * <p>
  * Used to communicate from UI to UIBackend to inventory.
- * 
- * @author maumau
  *
+ * @author maumau
  */
 public class Product {
+
     @JsonProperty("id")
     private String id;
     @JsonProperty("name")
@@ -33,14 +29,12 @@ public class Product {
     @JsonProperty("price")
     private double price;
 
-    public Product() {
-    }
+    public Product() {}
 
     @JsonCreator
     public Product(@JsonProperty("id") String id, @JsonProperty("name") String name,
-            @JsonProperty("description") String desription, @JsonProperty("units") int units,
-            @JsonProperty("price") double price) {
-        super();
+        @JsonProperty("description") String desription, @JsonProperty("units") int units,
+        @JsonProperty("price") double price) {
         this.id = id;
         this.name = name;
         this.desription = desription;
@@ -49,7 +43,6 @@ public class Product {
     }
 
     public Product(String name, String desription, int units, double price) {
-        super();
         this.name = name;
         this.desription = desription;
         this.units = units;

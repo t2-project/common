@@ -1,27 +1,20 @@
 package de.unistuttgart.t2.common;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 
 /**
  * The content of a users shopping cart.
- * 
  * <p>
- * Holds the productIds of the products in the cart and how many units of each
- * product are in the cart.
- * 
+ * Holds the productIds of the products in the cart and how many units of each product are in the cart.
  * <p>
  * Used to communicated with the cart service.
- * 
- * @author maumau
  *
+ * @author maumau
  */
 public class CartContent {
+
     @JsonProperty("content")
     private Map<String, Integer> content;
 
@@ -44,7 +37,7 @@ public class CartContent {
 
     /**
      * Get the productIds of the products in this cart.
-     * 
+     *
      * @return ids of all products in the cart
      */
     @JsonIgnore
@@ -53,9 +46,8 @@ public class CartContent {
     }
 
     /**
-     * Get the number of units of a product with the given id or zero if the product is
-     * not in the cart.
-     * 
+     * Get the number of units of a product with the given id or zero if the product is not in the cart.
+     *
      * @param productId to identify the product
      * @return number of units if the product is in the cart, zero otherwise
      */

@@ -4,34 +4,28 @@ import java.util.Map;
 
 /**
  * All the Information that any saga participant might possibly need.
- * 
  * <p>
  * Payment wants:
  * <ul>
- * <li> the information usually found on a credit card 
- * <li> the total money to pay
+ * <li>the information usually found on a credit card
+ * <li>the total money to pay
  * </ul>
- * 
  * <p>
  * Inventory wants:
  * <ul>
- * <li> the sessionId to identify the reservations to commit / delete. 
+ * <li>the sessionId to identify the reservations to commit / delete.
  * </ul>
- * 
  * <p>
  * Order wants:
- * <ul> 
- * <li> nothing really
- * <li> but takes total and sessionId anyway.
+ * <ul>
+ * <li>nothing really
+ * <li>but takes total and sessionId anyway.
  * </ul>
- * 
  * <p>
- * Another option would be, that each saga participant collects its data from
- * other services personally (e.g. payment again asks cart for which and what
- * quantity of items were bought), but that is a lot of communication effort. To
- * avoid this there is just this one big messages, that contains all information
- * and every one just picks what they need.
- * 
+ * Another option would be, that each saga participant collects its data from other services personally (e.g. payment
+ * again asks cart for which and what quantity of items were bought), but that is a lot of communication effort. To
+ * avoid this there is just this one big messages, that contains all information and every one just picks what they
+ * need.
  */
 public class SagaData {
 
@@ -47,7 +41,7 @@ public class SagaData {
 
     // costs
     private double total;
-    
+
     // for tracing only
     private Map<String, String> traceContext;
 
@@ -55,8 +49,7 @@ public class SagaData {
     // actually... no. because no one cares.
 
     public SagaData(String cardNumber, String cardOwner, String checksum, String sessionId, String orderId,
-            double total, Map<String, String> traceContext) {
-        super();
+        double total, Map<String, String> traceContext) {
         this.cardNumber = cardNumber;
         this.cardOwner = cardOwner;
         this.checksum = checksum;
@@ -67,7 +60,6 @@ public class SagaData {
     }
 
     public SagaData(String cardNumber, String cardOwner, String checksum, String sessionId, double total) {
-        super();
         this.cardNumber = cardNumber;
         this.cardOwner = cardOwner;
         this.checksum = checksum;
@@ -75,9 +67,7 @@ public class SagaData {
         this.total = total;
     }
 
-    public SagaData() {
-        super();
-    }
+    public SagaData() {}
 
     public String getCardNumber() {
         return cardNumber;
