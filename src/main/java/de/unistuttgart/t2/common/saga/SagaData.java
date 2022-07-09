@@ -1,6 +1,6 @@
 package de.unistuttgart.t2.common.saga;
 
-import java.util.Map;
+import java.util.*;
 
 /**
  * All the Information that any saga participant might possibly need.
@@ -27,20 +27,20 @@ import java.util.Map;
  * avoid this there is just this one big messages, that contains all information and every one just picks what they
  * need.
  */
-public class SagaData {
+public final class SagaData {
 
     // for payment
-    private String cardNumber;
-    private String cardOwner;
-    private String checksum;
+    private final String cardNumber;
+    private final String cardOwner;
+    private final String checksum;
 
     // identify user (at inventory)
-    private String sessionId;
+    private final String sessionId;
     // identify order (for order compensation)
     private String orderId;
 
     // costs
-    private double total;
+    private final double total;
 
     // for tracing only
     private Map<String, String> traceContext;
@@ -60,14 +60,12 @@ public class SagaData {
     }
 
     public SagaData(String cardNumber, String cardOwner, String checksum, String sessionId, double total) {
-        this.cardNumber = cardNumber;
-        this.cardOwner = cardOwner;
-        this.checksum = checksum;
-        this.sessionId = sessionId;
-        this.total = total;
+        this(cardNumber, cardOwner, checksum, sessionId, null, total, new HashMap<>());
     }
 
-    public SagaData() {}
+    public SagaData() {
+        this(null, null, null, null, 0);
+    }
 
     public String getCardNumber() {
         return cardNumber;

@@ -16,14 +16,14 @@ import com.fasterxml.jackson.annotation.*;
  *
  * @author maumau
  */
-public class Product {
+public final class Product {
 
     @JsonProperty("id")
     private String id;
     @JsonProperty("name")
     private String name;
     @JsonProperty("description")
-    private String desription;
+    private String description;
     @JsonProperty("units")
     private int units;
     @JsonProperty("price")
@@ -33,18 +33,18 @@ public class Product {
 
     @JsonCreator
     public Product(@JsonProperty("id") String id, @JsonProperty("name") String name,
-        @JsonProperty("description") String desription, @JsonProperty("units") int units,
+        @JsonProperty("description") String description, @JsonProperty("units") int units,
         @JsonProperty("price") double price) {
         this.id = id;
         this.name = name;
-        this.desription = desription;
+        this.description = description;
         this.units = units;
         this.price = price;
     }
 
-    public Product(String name, String desription, int units, double price) {
+    public Product(String name, String description, int units, double price) {
         this.name = name;
-        this.desription = desription;
+        this.description = description;
         this.units = units;
         this.price = price;
     }
@@ -66,11 +66,11 @@ public class Product {
     }
 
     public String getDescription() {
-        return desription;
+        return description;
     }
 
-    public void setDescription(String desription) {
-        this.desription = desription;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public int getUnits() {

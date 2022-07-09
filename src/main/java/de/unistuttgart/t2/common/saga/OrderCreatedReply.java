@@ -5,7 +5,7 @@ package de.unistuttgart.t2.common.saga;
  *
  * @author maumau
  */
-public class OrderCreatedReply {
+public final class OrderCreatedReply {
 
     private String id;
 

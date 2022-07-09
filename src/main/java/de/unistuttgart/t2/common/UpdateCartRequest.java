@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.*;
  * <p>
  * Used to communicate from UI to UIBackend.
  */
-public class UpdateCartRequest {
+public final class UpdateCartRequest {
 
     @JsonProperty("content")
     private Map<String, Integer> difference;
@@ -48,10 +48,7 @@ public class UpdateCartRequest {
      * @return number of units if the product is in the cart, zero otherwise
      */
     @JsonIgnore
-    public Integer getUnits(String productId) {
-        if (!difference.containsKey(productId)) {
-            return 0;
-        }
-        return difference.get(productId);
+    public int getUnits(String productId) {
+        return difference.getOrDefault(productId, 0);
     }
 }

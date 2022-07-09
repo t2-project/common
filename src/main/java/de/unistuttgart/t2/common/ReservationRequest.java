@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.*;
  *
  * @author maumau
  */
-public class ReservationRequest {
+public final class ReservationRequest {
 
     @JsonProperty("productId")
     private final String productId;

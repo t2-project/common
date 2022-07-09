@@ -7,7 +7,7 @@ import de.unistuttgart.t2.common.saga.SagaData;
  *
  * @author maumau
  */
-public class ActionCommand extends SagaCommand {
+public final class ActionCommand extends SagaCommand {
 
     public ActionCommand(SagaData data) {
         super(data);

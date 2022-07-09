@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.*;
  *
  * @author maumau
  */
-public class CartContent {
+public final class CartContent {
 
     @JsonProperty("content")
     private Map<String, Integer> content;
@@ -53,9 +53,6 @@ public class CartContent {
      */
     @JsonIgnore
     public Integer getUnits(String productId) {
-        if (!content.containsKey(productId)) {
-            return 0;
-        }
-        return content.get(productId);
+        return content.getOrDefault(productId, 0);
     }
 }
