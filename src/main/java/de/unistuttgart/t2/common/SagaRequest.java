@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.*;
  * <p>
  * Used to communicate with the orchestrator service.
  */
-public class SagaRequest {
+public final class SagaRequest {
 
     // for payment
     @JsonProperty("cardNumber")

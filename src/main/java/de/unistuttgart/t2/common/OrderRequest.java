@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.*;
  *
  * @author maumau
  */
-public class OrderRequest {
+public final class OrderRequest {
 
     @JsonProperty("cardNumber")
     private final String cardNumber;
