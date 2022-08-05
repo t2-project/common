@@ -65,7 +65,7 @@ public final class MemoryLeaker implements HandlerInterceptor {
     public static void changeExpectedMemoryPercentage(double newPercentage) {
         expectedMemoryPercentage = Percentage.fromRealPercentage(newPercentage, invalid -> {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                String.format("Cannot request memory above 100% or below 0%. You requested %.2f%%.", invalid));
+                String.format("Cannot request memory above 100%% or below 0%%. You requested %.2f%%.", invalid));
         });
         adaptMemory();
     }
@@ -74,6 +74,7 @@ public final class MemoryLeaker implements HandlerInterceptor {
      * Clears the memory leak, if present.
      */
     public static void clearMemoryLeak() {
-        changeExpectedMemoryPercentage(-1);
+        expectedMemoryPercentage = -1;
+        adaptMemory();
     }
 }

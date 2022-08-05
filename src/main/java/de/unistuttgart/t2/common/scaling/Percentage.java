@@ -16,7 +16,7 @@ final class Percentage {
      * Converts percentages in range {@code 0% <= toConvert < 100%} to their common mathematical form
      * ({@code 0.0 <= toConvert < 1.0}).<br>
      * No-op when {@code 0.0 <= toConvert < 1.0} already.<br>
-     * Behaves just as {@code toConvert/100} when {@code 1.0 <= toConvert < 100.0}.
+     * Behaves exactly as {@code toConvert/100} when {@code 1.0 <= toConvert < 100.0}.
      *
      * @param toConvert      the double to convert
      * @param onInvalidValue action to perform when an invalid value has been given. The parameter will be given in
