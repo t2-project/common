@@ -5,6 +5,8 @@ import java.util.HashSet;
 
 import javax.servlet.http.*;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 /**
@@ -57,18 +59,14 @@ public final class MemoryLeaker implements HandlerInterceptor {
      * {@code 0} disables the memory leak without clearing the potentially already allocated memory.
      *
      * @param newPercentage the minimal percentage of memory to use
-     * @throws IllegalArgumentException if the value is {@code >= 100}
+     * @throws ResponseStatusException (400) if the percentage is invalid
+     * @see Percentage#fromRealPercentage(double, java.util.function.DoubleConsumer)
      */
-    public static void changeExpectedMemoryPercentage(double newPercentage)
-        throws IllegalArgumentException {
-        if (newPercentage >= 100) {
-            throw new IllegalArgumentException(String
-                .format("Cannot request memory above 100%. You requested %.2f%%.", newPercentage));
-        }
-        if (newPercentage >= 1) {
-            newPercentage /= 100; // Has been passed as actual percentage, i.e. 56.5
-        }
-        expectedMemoryPercentage = newPercentage;
+    public static void changeExpectedMemoryPercentage(double newPercentage) {
+        expectedMemoryPercentage = Percentage.fromRealPercentage(newPercentage, invalid -> {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                String.format("Cannot request memory above 100% or below 0%. You requested %.2f%%.", invalid));
+        });
         adaptMemory();
     }
 
