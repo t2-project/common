@@ -58,4 +58,30 @@ public class AutoscalingController {
     public MemoryInfo getMemoryInformation() {
         return new MemoryInfo();
     }
+
+    @Operation(summary = "Ensures that consistently at least {cpu}% is used", description = "time unit = values known to https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/ChronoUnit.html#valueOf(java.lang.String), case insensitive, default seconds.\n"
+        + "CPU usage defines the percentage of CPU to use at all times, for all cores combined, hence can be at most 100*{number of cores}.\n"
+        + "The mechanism works by using 100% per core for an interval of length {requested CPU percentage} * {interval length} / {number of cores} periodically.\n"
+        + "Interval length decides how long the interval is in {time unit}. Default 10.", tags = "CPU")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Successfully demanded a CPU usage of at least {cpu}%") })
+    @PostMapping("/autoscaling/require-cpu")
+    public void requireCPU(@RequestBody CPUUsageRequest cpu) {
+        CPUUsageManager.requireCPU(cpu.convert());
+    }
+
+    @Operation(summary = "Removes the requirement to use a minimum of CPU at all times", tags = "CPU")
+    @ApiResponses(value = @ApiResponse(responseCode = "200", description = "Successfully disabled the minimum usage requirements for the CPU"))
+    @PostMapping("/autoscaling/remove-cpu-usage-requirements")
+    public void removeCPURequirements() {
+        CPUUsageManager.stop();
+    }
+
+    @Operation(summary = "Show current CPU information", description = "Returns how many cores are vailable, what interval is used and .", tags = "CPU")
+    @ApiResponses(value = @ApiResponse(responseCode = "200", description = "Successfully returned the current CPU information"))
+    @GetMapping(path = "/autoscaling/cpu-info", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public CPUUsage getCPUInformation() {
+        return CPUUsageManager.getCurrentStatus();
+    }
 }
