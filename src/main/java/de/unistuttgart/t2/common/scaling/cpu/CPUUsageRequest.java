@@ -1,4 +1,4 @@
-package de.unistuttgart.t2.common.scaling;
+package de.unistuttgart.t2.common.scaling.cpu;
 
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;

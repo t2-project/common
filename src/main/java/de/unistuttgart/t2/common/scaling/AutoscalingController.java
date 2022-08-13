@@ -3,6 +3,9 @@ package de.unistuttgart.t2.common.scaling;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import de.unistuttgart.t2.common.scaling.cpu.*;
+import de.unistuttgart.t2.common.scaling.memory.*;
+import de.unistuttgart.t2.common.scaling.request.RequestDenier;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.*;
 

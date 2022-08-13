@@ -10,7 +10,7 @@ import java.util.function.DoubleConsumer;
  * @author Leon Hofmeister
  * @since 1.2.0
  */
-final class Percentage {
+public final class Percentage {
 
     /**
      * Converts percentages in range {@code 0% <= toConvert < 100%} to their common mathematical form
@@ -24,7 +24,7 @@ final class Percentage {
      * @return the converted percentage, or {@link Double#NaN} if the value could not be converted
      * @since 1.2.0
      */
-    static double fromRealPercentage(double toConvert, DoubleConsumer onInvalidValue) {
+    public static double fromRealPercentage(double toConvert, DoubleConsumer onInvalidValue) {
         if (toConvert >= 100 || toConvert < 0) {
             if (toConvert > -1) // -0.5 -> -50[%]
                 toConvert *= 100;

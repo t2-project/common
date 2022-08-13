@@ -1,4 +1,4 @@
-package de.unistuttgart.t2.common.scaling;
+package de.unistuttgart.t2.common.scaling.cpu;
 
 import java.util.*;
 import java.util.concurrent.*;
