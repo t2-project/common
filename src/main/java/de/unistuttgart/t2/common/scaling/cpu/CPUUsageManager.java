@@ -11,8 +11,8 @@ import java.util.concurrent.*;
  */
 public class CPUUsageManager {
 
-    private static CPUUsage status = CPUUsage.newInfoWithoutLimits();
-    private static Optional<ExecutorService> taskExecutor;
+    static CPUUsage status = CPUUsage.newUsageWithoutLimits();
+    static Optional<ExecutorService> taskExecutor = Optional.empty();
 
     static {
         setup();
@@ -24,9 +24,8 @@ public class CPUUsageManager {
      * @param cpu the CPU usage to use
      */
     public static void requireCPU(CPUUsage cpu) {
-        status = Objects.requireNonNullElseGet(cpu, CPUUsage::newInfoWithoutLimits);
-        if (status.limitsPresent())
-            setupExecutor();
+        status = Objects.requireNonNullElseGet(cpu, CPUUsage::newUsageWithoutLimits);
+        setupExecutor();
         taskExecutor.ifPresent(e -> addTasks());
     }
 
@@ -53,9 +52,8 @@ public class CPUUsageManager {
 
     private static void setupExecutor() {
         stop();
-        taskExecutor =
-            status.limitsPresent() ? Optional.of(Executors.newScheduledThreadPool(status.getAvailableCores()))
-                : Optional.empty();
+        if (status.limitsPresent())
+            taskExecutor = Optional.of(Executors.newScheduledThreadPool(status.getAvailableCores()));
     }
 
     /**
@@ -72,7 +70,7 @@ public class CPUUsageManager {
 
     /**
      * Occupies one core completely for {@link CPUUsage#limitInNanosecondsPerCore()} nanoseconds.<br>
-     * Callers must ensure to call this method after every {@link CPUUsage#getIntervalLength()}, so that the minimally
+     * Callers must ensure to call this method after every {@link CPUUsage#getInterval()}, so that the minimally
      * required CPU usage is {@link CPUUsage#getMinCPUUsage()}.
      */
     private static void simulateWork() {

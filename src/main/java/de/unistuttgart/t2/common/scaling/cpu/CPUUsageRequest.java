@@ -14,19 +14,19 @@ import java.util.Objects;
 public final class CPUUsageRequest {
 
     // i.e. SECONDS, HOURS, DAYS, ...
-    private String timeUnit;
+    String timeUnit;
 
     // Wrappers because they are optional
-    private Long intervalLength;
-    private Long cpuPercentage;
+    Long intervalLength;
+    Double cpuPercentage;
 
     /**
      * @return this object converted to the most fitting representation of a {@link CPUUsage}.<br>
      *         Fallbacks for missing values are:
      *         <ul>
-     *         <li>seconds if no time unit is given</li>
-     *         <li>10 if no interval length is given</li>
-     *         <li>0 if no requested CPU usage is given</li>
+     *         <li>{@link CPUUsage#DEFAULT_TIME_UNIT} if no time unit is given</li>
+     *         <li>{@link CPUUsage#DEFAULT_INTERVAL_LENGTH} if no interval length is given</li>
+     *         <li>{@link CPUUsage#DEFAULT_REQUESTED_CPU_PERCENTAGE} if no requested CPU usage is given</li>
      *         </ul>
      * @since 1.2.0
      */
@@ -35,10 +35,10 @@ public final class CPUUsageRequest {
         try {
             unit = ChronoUnit.valueOf(timeUnit.toUpperCase());
         } catch (NullPointerException | IllegalArgumentException e) {
-            unit = ChronoUnit.SECONDS;
+            unit = CPUUsage.DEFAULT_TIME_UNIT;
         }
 
-        return new CPUUsage(unit.name(), (long) Objects.requireNonNullElse(intervalLength, 10),
-            (long) Objects.requireNonNullElse(cpuPercentage, 0));
+        return new CPUUsage(unit.name(), Objects.requireNonNullElse(intervalLength, CPUUsage.DEFAULT_INTERVAL_LENGTH),
+            Objects.requireNonNullElse(cpuPercentage, CPUUsage.DEFAULT_REQUESTED_CPU_PERCENTAGE));
     }
 }

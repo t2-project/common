@@ -2,7 +2,7 @@ package de.unistuttgart.t2.common.scaling.cpu;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.Objects;
 
 import de.unistuttgart.t2.common.scaling.Percentage;
 
@@ -14,18 +14,22 @@ import de.unistuttgart.t2.common.scaling.Percentage;
  */
 public final class CPUUsage {
 
-    private final Optional<Duration> intervalLength;
-    private final double minCPUUsage;
+    static final ChronoUnit DEFAULT_TIME_UNIT = ChronoUnit.SECONDS;
+    static final long DEFAULT_INTERVAL_LENGTH = 10;
+    static final double DEFAULT_REQUESTED_CPU_PERCENTAGE = Double.NEGATIVE_INFINITY;
+
+    final Duration interval;
+    final double minCPUUsage;
 
     // Not final as it is stated in the Javadoc that the number can change dynamically
-    private int availableCores = Runtime.getRuntime().availableProcessors();
+    int availableCores = Runtime.getRuntime().availableProcessors();
 
     /**
      * Creates a cpu usage object without any limits imposed
      */
     CPUUsage() {
-        intervalLength = Optional.empty();
-        minCPUUsage = -1;
+        interval = Duration.of(DEFAULT_INTERVAL_LENGTH, DEFAULT_TIME_UNIT);
+        minCPUUsage = DEFAULT_REQUESTED_CPU_PERCENTAGE;
     }
 
     /**
@@ -35,9 +39,9 @@ public final class CPUUsage {
      * @param intervalLength   the length of the "waste" interval in {@code timeUnit} steps
      * @param minCPUPercentage percentage of CPU to "waste"
      */
-    CPUUsage(String timeUnit, long intervalLength, long minCPUPercentage) {
-        this.intervalLength = Optional.of(Duration.of(intervalLength,
-            ChronoUnit.valueOf(Objects.requireNonNullElse(timeUnit, "SECONDS").toUpperCase())));
+    CPUUsage(String timeUnit, long intervalLength, double minCPUPercentage) {
+        interval = Duration.of(intervalLength,
+            ChronoUnit.valueOf(Objects.requireNonNullElse(timeUnit, DEFAULT_TIME_UNIT.name()).toUpperCase())).abs();
         minCPUUsage = minCPUPercentage;
     }
 
@@ -52,8 +56,7 @@ public final class CPUUsage {
      * @return whether this usage actually imposes any limits
      */
     public boolean limitsPresent() {
-        return intervalLength.isPresent()
-            && Percentage.fromRealPercentage(minCPUUsage / availableCores, d -> {}) != Double.NaN;
+        return Percentage.fromRealPercentage(minCPUUsage / availableCores, d -> {}) > 0;
     }
 
     /**
@@ -62,7 +65,7 @@ public final class CPUUsage {
      */
     public long limitInNanosecondsPerCore() {
 
-        return (long) (intervalLength.orElse(Duration.ZERO).get(ChronoUnit.NANOS)
+        return (long) (interval.get(ChronoUnit.NANOS)
             * Percentage.fromRealPercentage(minCPUUsage / availableCores, invalid -> {
                 throw new IllegalStateException(String.format(
                     "Cannot request a minimum of %f%% CPU usage with %d cores, which would mean %f%% CPU usage per core",
@@ -74,8 +77,8 @@ public final class CPUUsage {
         return availableCores;
     }
 
-    public Optional<Duration> getIntervalLength() {
-        return intervalLength;
+    public Duration getInterval() {
+        return interval;
     }
 
     public double getMinCPUUsage() {
@@ -86,7 +89,7 @@ public final class CPUUsage {
      * @return a new {@code CPUInfo} that has no CPU limits set
      * @see #CPUUsage()
      */
-    public static CPUUsage newInfoWithoutLimits() {
+    public static CPUUsage newUsageWithoutLimits() {
         return new CPUUsage();
     }
 }
