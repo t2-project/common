@@ -38,22 +38,28 @@ public class AutoscalingController {
         @ApiResponse(responseCode = "200", description = "Successfully demanded a memory usage of at least {memory}%"),
         @ApiResponse(responseCode = "400", description = "{memory} >= 100.0 || {memory} < 0.0") })
     @PostMapping("/autoscaling/require-memory/{memory}")
-    public void requireMemory(@PathVariable(name = "memory") double memory) {
+    @ResponseBody
+    public MemoryInfo requireMemory(@PathVariable(name = "memory") double memory) {
         MemoryLeaker.changeExpectedMemoryPercentage(memory);
+        return new MemoryInfo();
     }
 
     @Operation(summary = "Clear the memory leak if it exists", description = "Let's the service return to its normal memory usage.", tags = "Memory")
     @ApiResponses(value = @ApiResponse(responseCode = "200", description = "Successfully cleared the memory leak"))
     @PostMapping("/autoscaling/clear-memory-leak")
-    public void clearMemoryLeak() {
+    @ResponseBody
+    public MemoryInfo clearMemoryLeak() {
         MemoryLeaker.clearMemoryLeak();
+        return new MemoryInfo();
     }
 
     @Operation(summary = "Disable adding more unneeded memory", description = "Needed when wanting to keep an already existing memory leak without increasing the leaked amount of memory once the GC frees some other memory.", tags = "Memory")
     @ApiResponses(value = @ApiResponse(responseCode = "200", description = "Successfully disabled the memory leak"))
     @PostMapping("/autoscaling/disable-memory-leak")
-    public void disableMemoryLeak() {
+    @ResponseBody
+    public MemoryInfo disableMemoryLeak() {
         MemoryLeaker.changeExpectedMemoryPercentage(0.0);
+        return new MemoryInfo();
     }
 
     @Operation(summary = "Show current memory information", description = "Returns how many bytes are currently used, free, and in total vailable.", tags = "Memory")
@@ -71,15 +77,19 @@ public class AutoscalingController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Successfully demanded a CPU usage of at least {cpu}%") })
     @PostMapping("/autoscaling/require-cpu")
-    public void requireCPU(@RequestBody @Valid CPUUsageRequest cpu) {
+    @ResponseBody
+    public CPUUsage requireCPU(@RequestBody @Valid CPUUsageRequest cpu) {
         CPUUsageManager.requireCPU(cpu.convert());
+        return CPUUsageManager.getCurrentStatus();
     }
 
     @Operation(summary = "Removes the requirement to use a minimum of CPU at all times", tags = "CPU")
     @ApiResponses(value = @ApiResponse(responseCode = "200", description = "Successfully disabled the minimum usage requirements for the CPU"))
     @PostMapping("/autoscaling/remove-cpu-usage-requirements")
-    public void removeCPURequirements() {
+    @ResponseBody
+    public CPUUsage removeCPURequirements() {
         CPUUsageManager.stop();
+        return CPUUsageManager.getCurrentStatus();
     }
 
     @Operation(summary = "Show current CPU information", description = "Returns how many cores are vailable, what interval is used and .", tags = "CPU")
