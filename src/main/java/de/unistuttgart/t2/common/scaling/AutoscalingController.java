@@ -1,5 +1,7 @@
 package de.unistuttgart.t2.common.scaling;
 
+import javax.validation.Valid;
+
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -63,13 +65,13 @@ public class AutoscalingController {
     }
 
     @Operation(summary = "Ensures that consistently at least {cpu}% is used", description = "time unit = values known to https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/ChronoUnit.html#valueOf(java.lang.String), case insensitive, default seconds.\n"
-        + "CPU usage defines the percentage of CPU to use at all times, for all cores combined, hence can be at most 100*{number of cores}.\n"
+        + "CPU percentage defines the percentage of CPU to use at all times, for all cores combined, hence must be lower than 100*{number of cores}.\n"
         + "The mechanism works by using 100% per core for an interval of length {requested CPU percentage} * {interval length} / {number of cores} periodically.\n"
         + "Interval length decides how long the interval is in {time unit}. Default 10.", tags = "CPU")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Successfully demanded a CPU usage of at least {cpu}%") })
     @PostMapping("/autoscaling/require-cpu")
-    public void requireCPU(@RequestBody CPUUsageRequest cpu) {
+    public void requireCPU(@RequestBody @Valid CPUUsageRequest cpu) {
         CPUUsageManager.requireCPU(cpu.convert());
     }
 

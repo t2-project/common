@@ -9,7 +9,7 @@ import java.util.concurrent.*;
  * @author Leon Hofmeister
  * @since 1.2.0
  */
-public class CPUUsageManager {
+public final class CPUUsageManager {
 
     static CPUUsage status = CPUUsage.newUsageWithoutLimits();
     static Optional<ScheduledExecutorService> taskExecutor = Optional.empty();

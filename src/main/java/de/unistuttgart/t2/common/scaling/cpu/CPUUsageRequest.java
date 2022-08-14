@@ -41,4 +41,34 @@ public final class CPUUsageRequest {
         return new CPUUsage(unit.name(), Objects.requireNonNullElse(intervalLength, CPUUsage.DEFAULT_INTERVAL_LENGTH),
             Objects.requireNonNullElse(cpuPercentage, CPUUsage.DEFAULT_REQUESTED_CPU_PERCENTAGE));
     }
+
+    @Override
+    public String toString() {
+        return String.format("CPUUsageRequest [timeUnit=%s, intervalLength=%s, cpuPercentage=%s]", timeUnit,
+            intervalLength, cpuPercentage);
+    }
+
+    public String getTimeUnit() {
+        return timeUnit;
+    }
+
+    public void setTimeUnit(String timeUnit) {
+        this.timeUnit = timeUnit;
+    }
+
+    public Long getIntervalLength() {
+        return intervalLength;
+    }
+
+    public void setIntervalLength(Long intervalLength) {
+        this.intervalLength = intervalLength;
+    }
+
+    public Double getCpuPercentage() {
+        return cpuPercentage;
+    }
+
+    public void setCpuPercentage(Double cpuPercentage) {
+        this.cpuPercentage = cpuPercentage;
+    }
 }

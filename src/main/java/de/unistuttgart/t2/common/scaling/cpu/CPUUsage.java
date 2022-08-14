@@ -91,4 +91,10 @@ public final class CPUUsage {
     public static CPUUsage newUsageWithoutLimits() {
         return new CPUUsage();
     }
+
+    @Override
+    public String toString() {
+        return String.format("CPUUsage [interval=%s, minCPUUsage=%s, availableCores=%s]", interval, minCPUUsage,
+            availableCores);
+    }
 }
