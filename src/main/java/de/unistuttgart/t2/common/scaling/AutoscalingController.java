@@ -2,6 +2,7 @@ package de.unistuttgart.t2.common.scaling;
 
 import javax.validation.Valid;
 
+import org.slf4j.*;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,11 +20,14 @@ import io.swagger.v3.oas.annotations.responses.*;
 @RestController
 public class AutoscalingController {
 
+    private static final Logger logger = LoggerFactory.getLogger(AutoscalingController.class);
+
     @Operation(summary = "Unblock all requests", description = "Lifts the block for any route", tags = "Block")
     @ApiResponses(value = @ApiResponse(responseCode = "200", description = "Successfully lifted the route block"))
     @PostMapping("/autoscaling/unblock-routes")
     public void unblockRoutes() {
         RequestDenier.shouldBlockAllRoutes(false);
+        logger.info("Unblocked all non-autoscaling routes");
     }
 
     @Operation(summary = "Block all subsequent requests", description = "deterministically produces a SLO for all subsequent requests outside of \"/autoscaling/*\" ", tags = "Block")
@@ -31,6 +35,7 @@ public class AutoscalingController {
     @PostMapping("/autoscaling/block-routes")
     public void blockRoutes() {
         RequestDenier.shouldBlockAllRoutes(true);
+        logger.warn("Blocked all non-autoscaling routes");
     }
 
     @Operation(summary = "Ensures that consistently at least {memory}% is used", description = "values in range 0 <= {memory} < 1 are treated the same as values in range 1 <= {memory} < 100", tags = "Memory")
@@ -41,7 +46,10 @@ public class AutoscalingController {
     @ResponseBody
     public MemoryInfo requireMemory(@PathVariable(name = "memory") double memory) {
         MemoryLeaker.changeExpectedMemoryPercentage(memory);
-        return new MemoryInfo();
+        logger.warn("Required {}% memory", memory);
+        final MemoryInfo status = new MemoryInfo();
+        logger.info("Memory stats: {}", status);
+        return status;
     }
 
     @Operation(summary = "Clear the memory leak if it exists", description = "Let's the service return to its normal memory usage.", tags = "Memory")
@@ -50,7 +58,10 @@ public class AutoscalingController {
     @ResponseBody
     public MemoryInfo clearMemoryLeak() {
         MemoryLeaker.clearMemoryLeak();
-        return new MemoryInfo();
+        logger.info("Cleared memory leak");
+        final MemoryInfo status = new MemoryInfo();
+        logger.info("Memory stats: {}", status);
+        return status;
     }
 
     @Operation(summary = "Disable adding more unneeded memory", description = "Needed when wanting to keep an already existing memory leak without increasing the leaked amount of memory once the GC frees some other memory.", tags = "Memory")
@@ -59,7 +70,10 @@ public class AutoscalingController {
     @ResponseBody
     public MemoryInfo disableMemoryLeak() {
         MemoryLeaker.changeExpectedMemoryPercentage(0.0);
-        return new MemoryInfo();
+        logger.warn("Locked memory leak to its current size");
+        final MemoryInfo status = new MemoryInfo();
+        logger.info("Memory stats: {}", status);
+        return status;
     }
 
     @Operation(summary = "Show current memory information", description = "Returns how many bytes are currently used, free, and in total vailable.", tags = "Memory")
@@ -67,7 +81,10 @@ public class AutoscalingController {
     @GetMapping(path = "/autoscaling/memory-info", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public MemoryInfo getMemoryInformation() {
-        return new MemoryInfo();
+        logger.debug("Retrieved current memory information");
+        final MemoryInfo status = new MemoryInfo();
+        logger.debug("Memory stats: {}", status);
+        return status;
     }
 
     @Operation(summary = "Ensures that consistently at least {cpu}% is used", description = "time unit = values known to https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/ChronoUnit.html#valueOf(java.lang.String), case insensitive, default seconds.\n"
@@ -79,8 +96,11 @@ public class AutoscalingController {
     @PostMapping("/autoscaling/require-cpu")
     @ResponseBody
     public CPUUsage requireCPU(@RequestBody @Valid CPUUsageRequest cpu) {
+        logger.warn("Got a request to adapt CPU Usage to {}", cpu);
         CPUUsageManager.requireCPU(cpu.convert());
-        return CPUUsageManager.getCurrentStatus();
+        final CPUUsage status = CPUUsageManager.getCurrentStatus();
+        logger.info("Current CPU Usage is {}", status);
+        return status;
     }
 
     @Operation(summary = "Removes the requirement to use a minimum of CPU at all times", tags = "CPU")
@@ -88,8 +108,11 @@ public class AutoscalingController {
     @PostMapping("/autoscaling/remove-cpu-usage-requirements")
     @ResponseBody
     public CPUUsage removeCPURequirements() {
+        logger.info("Got a request to no longer inflate CPU usage artificially");
         CPUUsageManager.stop();
-        return CPUUsageManager.getCurrentStatus();
+        final CPUUsage status = CPUUsageManager.getCurrentStatus();
+        logger.info("Current CPU Usage is {}", status);
+        return status;
     }
 
     @Operation(summary = "Show current CPU information", description = "Returns how many cores are vailable, what interval is used and .", tags = "CPU")
@@ -97,6 +120,9 @@ public class AutoscalingController {
     @GetMapping(path = "/autoscaling/cpu-info", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public CPUUsage getCPUInformation() {
-        return CPUUsageManager.getCurrentStatus();
+        logger.debug("Retrieved current CPU information");
+        final CPUUsage status = CPUUsageManager.getCurrentStatus();
+        logger.debug("Memory stats: {}", status);
+        return status;
     }
 }
