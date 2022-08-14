@@ -11,11 +11,11 @@ import java.util.concurrent.*;
  */
 public final class CPUUsageManager {
 
-    static CPUUsage status = CPUUsage.newUsageWithoutLimits();
+    static CPUUsage status;
     static Optional<ScheduledExecutorService> taskExecutor = Optional.empty();
 
     static {
-        setup();
+        setupExecutor();
     }
 
     /**
@@ -24,8 +24,8 @@ public final class CPUUsageManager {
      * @param cpu the CPU usage to use
      */
     public static void requireCPU(CPUUsage cpu) {
-        status = Objects.requireNonNullElseGet(cpu, CPUUsage::newUsageWithoutLimits);
         setupExecutor();
+        status = Objects.requireNonNullElseGet(cpu, CPUUsage::newUsageWithoutLimits);
         taskExecutor.ifPresent(e -> addTasks());
     }
 
@@ -35,6 +35,7 @@ public final class CPUUsageManager {
     public static void stop() {
         taskExecutor.ifPresent(ExecutorService::shutdownNow);
         taskExecutor = Optional.empty();
+        status = CPUUsage.newUsageWithoutLimits();
     }
 
     /**
@@ -43,11 +44,6 @@ public final class CPUUsageManager {
     public static CPUUsage getCurrentStatus() {
         status.refreshAvailableCores();
         return status;
-    }
-
-    private static void setup() {
-        status.refreshAvailableCores();
-        setupExecutor();
     }
 
     private static void setupExecutor() {
@@ -78,6 +74,6 @@ public final class CPUUsageManager {
     private static void simulateWork() {
         long busyTime = status.limitInNanosecondsPerCore();
         long start = System.nanoTime();
-        while (System.nanoTime() <= start + busyTime) {}
+        while (System.nanoTime() <= start + busyTime && !Thread.currentThread().isInterrupted()) {}
     }
 }

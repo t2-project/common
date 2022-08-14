@@ -64,6 +64,7 @@ public final class CPUUsageTest {
         // Stop the CPU leak again
         CPUUsageManager.stop();
         assertTrue(CPUUsageManager.taskExecutor.isEmpty());
+        assertFalse(CPUUsageManager.status.limitsPresent());
     }
 
     @Test
@@ -93,6 +94,7 @@ public final class CPUUsageTest {
         // Stop the CPU leak again
         CPUUsageManager.stop();
         assertTrue(CPUUsageManager.taskExecutor.isEmpty());
+        assertFalse(CPUUsageManager.status.limitsPresent());
     }
 
     private void checkDefaultUsage(CPUUsage usage) {
