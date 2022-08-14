@@ -28,8 +28,7 @@ public final class CPUUsage {
      * Creates a cpu usage object without any limits imposed
      */
     CPUUsage() {
-        interval = Duration.of(DEFAULT_INTERVAL_LENGTH, DEFAULT_TIME_UNIT);
-        minCPUUsage = DEFAULT_REQUESTED_CPU_PERCENTAGE;
+        this(DEFAULT_TIME_UNIT.name(), DEFAULT_INTERVAL_LENGTH, DEFAULT_REQUESTED_CPU_PERCENTAGE);
     }
 
     /**
@@ -65,7 +64,7 @@ public final class CPUUsage {
      */
     public long limitInNanosecondsPerCore() {
 
-        return (long) (interval.get(ChronoUnit.NANOS)
+        return (long) (interval.toNanos()
             * Percentage.fromRealPercentage(minCPUUsage / availableCores, invalid -> {
                 throw new IllegalStateException(String.format(
                     "Cannot request a minimum of %f%% CPU usage with %d cores, which would mean %f%% CPU usage per core",

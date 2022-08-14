@@ -1,6 +1,7 @@
 package de.unistuttgart.t2.common.scaling.cpu;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
@@ -43,26 +44,55 @@ public final class CPUUsageTest {
      * testing that nothing throws an error, and everything works <em>theoretically</em> as intended.
      */
     @Test
-    void testCPUUsage() {
+    void testCPUUsage25Percent() {
         assertFalse(CPUUsageManager.status.limitsPresent());
         checkDefaultUsage(CPUUsage.newUsageWithoutLimits());
 
-        // Normal case: Require 25% CPU for all cores combined with an interval of 1 minute
         final double percentage = 0.25;
+
+        // Normal case: Require 25% CPU for all cores combined with an interval of 1 minute
         CPUUsageManager.requireCPU(new CPUUsage(ChronoUnit.MINUTES.name(), 1, percentage));
         assertTrue(CPUUsageManager.status.limitsPresent());
 
-        // Test that it really should block for 15 seconds
-        assertEquals(
-            CPUUsageManager.status.interval.get(ChronoUnit.NANOS) * percentage
-                / Runtime.getRuntime().availableProcessors(),
-            CPUUsageManager.status.limitInNanosecondsPerCore());
-        assertEquals(15 * 1_000_000_000, CPUUsageManager.status.limitInNanosecondsPerCore());
+        final int cores = Runtime.getRuntime().availableProcessors();
+        final long limitInNanosecondsPerCore = CPUUsageManager.status.limitInNanosecondsPerCore();
 
-        // Stopping the CPU leak again
+        // Test that it really blocks for 15 seconds for all cores combined
+        assertEquals(CPUUsageManager.status.interval.toNanos() * percentage / cores, limitInNanosecondsPerCore);
+        assertEquals(Duration.ofSeconds(15).toNanos() / cores, limitInNanosecondsPerCore);
+
+        // Stop the CPU leak again
         CPUUsageManager.stop();
         assertTrue(CPUUsageManager.taskExecutor.isEmpty());
+    }
+
+    @Test
+    void testCPUMultiCoreUsage() {
+        final int cores = Runtime.getRuntime().availableProcessors();
+
+        assumeTrue(cores > 1, "Cannot execute multi core test with only 1 core");
+        final double maxPercentage = cores * 100;
+
+        // Normal case 2: Require ({100*number of cores}-constant)% CPU for all cores combined (i.e. 800%-50%)
+        // (at least two cores must be present) for an interval of 30 seconds
+        CPUUsageManager.requireCPU(new CPUUsage(ChronoUnit.SECONDS.name(), 30, maxPercentage - 50));
+        assertTrue(CPUUsageManager.status.limitsPresent());
+
+        // Normal case 3: exactly ({100*number of cores}-1)% CPU has been requested - valid
+        CPUUsageManager.requireCPU(new CPUUsage(ChronoUnit.SECONDS.name(), 30, maxPercentage - 1));
+        assertTrue(CPUUsageManager.status.limitsPresent());
+
+        // Edge case: exactly {100*number of cores}% CPU has been requested - fail silently
+        CPUUsageManager.requireCPU(new CPUUsage(ChronoUnit.SECONDS.name(), 30, maxPercentage));
         assertFalse(CPUUsageManager.status.limitsPresent());
+
+        // Error case: more memory requested than possible - fail silently
+        CPUUsageManager.requireCPU(new CPUUsage(ChronoUnit.SECONDS.name(), 30, maxPercentage + 1));
+        assertFalse(CPUUsageManager.status.limitsPresent());
+
+        // Stop the CPU leak again
+        CPUUsageManager.stop();
+        assertTrue(CPUUsageManager.taskExecutor.isEmpty());
     }
 
     private void checkDefaultUsage(CPUUsage usage) {

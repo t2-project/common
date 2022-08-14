@@ -12,7 +12,7 @@ import java.util.concurrent.*;
 public class CPUUsageManager {
 
     static CPUUsage status = CPUUsage.newUsageWithoutLimits();
-    static Optional<ExecutorService> taskExecutor = Optional.empty();
+    static Optional<ScheduledExecutorService> taskExecutor = Optional.empty();
 
     static {
         setup();
@@ -63,8 +63,10 @@ public class CPUUsageManager {
     private static void addTasks() {
         if (taskExecutor.isEmpty() || !status.limitsPresent())
             return;
+        status.refreshAvailableCores();
         for (int i = 0; i < status.getAvailableCores(); ++i)
-            taskExecutor.orElseThrow().execute(CPUUsageManager::simulateWork);
+            taskExecutor.orElseThrow().scheduleAtFixedRate(CPUUsageManager::simulateWork, 0L,
+                status.getInterval().toMillis(), TimeUnit.MILLISECONDS);
 
     }
 
