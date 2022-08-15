@@ -42,11 +42,11 @@ public class AutoscalingController {
         logger.warn("Blocked all non-autoscaling routes");
     }
 
-    @Operation(summary = "Ensures that consistently at least {memory}% is used", description = "values in range 0 <= {memory} < 1 are treated the same as values in range 1 <= {memory} < 100", tags = "Memory")
+    @Operation(summary = "Ensures that consistently at least {memory}% is used", description = "Supports both mathematical percentages ( {memory} ∈ [0, 1), i.e. 0.052 = 5.2% ), and  human percentages ( {memory} ∈ [1, 100), i.e. 50.2 = 50.2%).", tags = "Memory")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Successfully demanded a memory usage of at least {memory}%"),
         @ApiResponse(responseCode = "400", description = "{memory} >= 100.0 || {memory} < 0.0") })
-    @PostMapping("/autoscaling/require-memory/{memory}")
+    @PostMapping("/autoscaling/require-memory/{memory}percent")
     @ResponseBody
     public MemoryInfo requireMemory(@PathVariable(name = "memory") double memory) {
         MemoryLeaker.changeExpectedMemoryPercentage(memory);
@@ -92,7 +92,8 @@ public class AutoscalingController {
     }
 
     @Operation(summary = "Ensures that consistently at least {cpu}% is used", description = "time unit = values known to https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/ChronoUnit.html#valueOf(java.lang.String), case insensitive, default seconds.\n"
-        + "CPU percentage defines the percentage of CPU to use at all times, for all cores combined, hence must be lower than 100*{number of cores}.\n"
+        + "CPU percentage defines the percentage of CPU to use at all times, for all cores combined.\n"
+        + "Supports both mathematical percentages ( {cpu percentage} ∈ [0, 1), i.e. 0.052 = 5.2% ), and  human percentages ( {cpu percentage} ∈ [1, 100 * {number of available cores}), i.e. 750.5 = 750.5% (full load for 7 cores and a half))."
         + "The mechanism works by using 100% per core for an interval of length {requested CPU percentage} * {interval length} / {number of cores} periodically.\n"
         + "Interval length decides how long the interval is in {time unit}. Default 10.", tags = "CPU")
     @ApiResponses(value = {
