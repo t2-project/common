@@ -3,6 +3,7 @@ package de.unistuttgart.t2.common.scaling;
 import javax.validation.Valid;
 
 import org.slf4j.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +22,9 @@ import io.swagger.v3.oas.annotations.responses.*;
 public class AutoscalingController {
 
     private static final Logger logger = LoggerFactory.getLogger(AutoscalingController.class);
+
+    @Autowired
+    CPUManager cpuManager;
 
     @Operation(summary = "Unblock all requests", description = "Lifts the block for any route", tags = "Block")
     @ApiResponses(value = @ApiResponse(responseCode = "200", description = "Successfully lifted the route block"))
@@ -97,8 +101,8 @@ public class AutoscalingController {
     @ResponseBody
     public CPUUsage requireCPU(@RequestBody @Valid CPUUsageRequest cpu) {
         logger.warn("Got a request to adapt CPU Usage to {}", cpu);
-        CPUUsageManager.requireCPU(cpu.convert());
-        final CPUUsage status = CPUUsageManager.getCurrentStatus();
+        cpuManager.requireCPU(cpu.convert());
+        final CPUUsage status = cpuManager.getCurrentStatus();
         logger.info("Current CPU Usage is {}", status);
         return status;
     }
@@ -109,8 +113,8 @@ public class AutoscalingController {
     @ResponseBody
     public CPUUsage removeCPURequirements() {
         logger.info("Got a request to no longer inflate CPU usage artificially");
-        CPUUsageManager.stop();
-        final CPUUsage status = CPUUsageManager.getCurrentStatus();
+        cpuManager.stop();
+        final CPUUsage status = cpuManager.getCurrentStatus();
         logger.info("Current CPU Usage is {}", status);
         return status;
     }
@@ -121,7 +125,7 @@ public class AutoscalingController {
     @ResponseBody
     public CPUUsage getCPUInformation() {
         logger.debug("Retrieved current CPU information");
-        final CPUUsage status = CPUUsageManager.getCurrentStatus();
+        final CPUUsage status = cpuManager.getCurrentStatus();
         logger.debug("Memory stats: {}", status);
         return status;
     }

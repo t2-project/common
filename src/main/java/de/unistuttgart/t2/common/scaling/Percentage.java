@@ -12,6 +12,8 @@ import java.util.function.DoubleConsumer;
  */
 public final class Percentage {
 
+    private Percentage() {}
+
     /**
      * Converts percentages in range {@code 0% <= toConvert < 100%} to their common mathematical form
      * ({@code 0.0 <= toConvert < 1.0}).<br>
@@ -26,8 +28,9 @@ public final class Percentage {
      */
     public static double fromRealPercentage(double toConvert, DoubleConsumer onInvalidValue) {
         if (toConvert >= 100 || toConvert < 0) {
-            if (toConvert > -1) // -0.5 -> -50[%]
+            if (Math.abs(toConvert) < 1) { // -0.5 -> -50[%]
                 toConvert *= 100;
+            }
             onInvalidValue.accept(toConvert);
             return Double.NaN;
         }

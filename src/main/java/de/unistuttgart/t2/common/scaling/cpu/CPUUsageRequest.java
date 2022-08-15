@@ -13,7 +13,11 @@ import java.util.Objects;
  */
 public final class CPUUsageRequest {
 
-    // i.e. SECONDS, HOURS, DAYS, ...
+    /**
+     * SECONDS, HOURS, DAYS, ...<br>
+     * -> anything, {@link ChronoUnit#valueOf(String)} can work with (case-insensitively)<br>
+     * Default: {@link CPUUsage#DEFAULT_TIME_UNIT}
+     */
     String timeUnit;
 
     // Wrappers because they are optional

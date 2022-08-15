@@ -3,18 +3,21 @@ package de.unistuttgart.t2.common.scaling.cpu;
 import java.util.*;
 import java.util.concurrent.*;
 
+import org.springframework.stereotype.Component;
+
 /**
  * Manages how much CPU is consistently used as minimum.
  *
  * @author Leon Hofmeister
  * @since 1.2.0
  */
-public final class CPUUsageManager {
+@Component
+public final class CPUManager {
 
-    static CPUUsage status;
-    static Optional<ScheduledExecutorService> taskExecutor = Optional.empty();
+    CPUUsage status = CPUUsage.newUsageWithoutLimits();
+    Optional<ScheduledExecutorService> taskExecutor = Optional.empty();
 
-    static {
+    public CPUManager() {
         setupExecutor();
     }
 
@@ -23,16 +26,16 @@ public final class CPUUsageManager {
      *
      * @param cpu the CPU usage to use
      */
-    public static void requireCPU(CPUUsage cpu) {
-        setupExecutor();
+    public void requireCPU(CPUUsage cpu) {
         status = Objects.requireNonNullElseGet(cpu, CPUUsage::newUsageWithoutLimits);
+        setupExecutor();
         taskExecutor.ifPresent(e -> addTasks());
     }
 
     /**
      * Flushes and deletes the runner, if present.
      */
-    public static void stop() {
+    public void stop() {
         taskExecutor.ifPresent(ExecutorService::shutdownNow);
         taskExecutor = Optional.empty();
         status = CPUUsage.newUsageWithoutLimits();
@@ -41,29 +44,31 @@ public final class CPUUsageManager {
     /**
      * @return the current CPU status
      */
-    public static CPUUsage getCurrentStatus() {
+    public CPUUsage getCurrentStatus() {
         status.refreshAvailableCores();
         return status;
     }
 
-    private static void setupExecutor() {
-        stop();
-        if (status.limitsPresent())
+    private void setupExecutor() {
+        taskExecutor.ifPresent(ExecutorService::shutdownNow);
+        if (status.limitsPresent()) {
             taskExecutor = Optional.of(Executors.newScheduledThreadPool(status.getAvailableCores()));
+        }
     }
 
     /**
      * Adds {@link CPUUsage#getAvailableCores()}} tasks to the periodically running executor completely blocking one
      * core, each running for a duration of {@code requestedCPUPercentage * intervalLength / availableCores}.
      */
-    private static void addTasks() {
-        if (taskExecutor.isEmpty() || !status.limitsPresent())
+    private void addTasks() {
+        if (taskExecutor.isEmpty() || !status.limitsPresent()) {
             return;
+        }
         status.refreshAvailableCores();
-        for (int i = 0; i < status.getAvailableCores(); ++i)
-            taskExecutor.orElseThrow().scheduleAtFixedRate(CPUUsageManager::simulateWork, 0L,
+        for (int i = 0; i < status.getAvailableCores(); ++i) {
+            taskExecutor.orElseThrow().scheduleAtFixedRate(this::simulateWork, 0L,
                 status.getInterval().toMillis(), TimeUnit.MILLISECONDS);
-
+        }
     }
 
     /**
@@ -71,7 +76,7 @@ public final class CPUUsageManager {
      * Callers must ensure to call this method after every {@link CPUUsage#getInterval()}, so that the minimally
      * required CPU usage is {@link CPUUsage#getMinCPUUsage()}.
      */
-    private static void simulateWork() {
+    private void simulateWork() {
         long busyTime = status.limitInNanosecondsPerCore();
         long start = System.nanoTime();
         while (System.nanoTime() <= start + busyTime && !Thread.currentThread().isInterrupted()) {}

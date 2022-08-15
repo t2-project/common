@@ -15,8 +15,11 @@ import org.junit.jupiter.api.Test;
  */
 public final class CPUUsageTest {
 
+    private final CPUManager manager = new CPUManager();
+
+    @Test
     void testCPUUsageHasCurrentlyAvailableProcessors() {
-        assertEquals(Runtime.getRuntime().availableProcessors(), CPUUsageManager.status.availableCores);
+        assertEquals(Runtime.getRuntime().availableProcessors(), manager.status.availableCores);
     }
 
     @Test
@@ -45,26 +48,26 @@ public final class CPUUsageTest {
      */
     @Test
     void testCPUUsage25Percent() {
-        assertFalse(CPUUsageManager.status.limitsPresent());
+        assertFalse(manager.status.limitsPresent());
         checkDefaultUsage(CPUUsage.newUsageWithoutLimits());
 
         final double percentage = 0.25;
 
         // Normal case: Require 25% CPU for all cores combined with an interval of 1 minute
-        CPUUsageManager.requireCPU(new CPUUsage(ChronoUnit.MINUTES.name(), 1, percentage));
-        assertTrue(CPUUsageManager.status.limitsPresent());
+        manager.requireCPU(new CPUUsage(ChronoUnit.MINUTES.name(), 1, percentage));
+        assertTrue(manager.status.limitsPresent());
 
         final int cores = Runtime.getRuntime().availableProcessors();
-        final long limitInNanosecondsPerCore = CPUUsageManager.status.limitInNanosecondsPerCore();
+        final long limitInNanosecondsPerCore = manager.status.limitInNanosecondsPerCore();
 
         // Test that it really blocks for 15 seconds for all cores combined
-        assertEquals(CPUUsageManager.status.interval.toNanos() * percentage / cores, limitInNanosecondsPerCore);
+        assertEquals(manager.status.interval.toNanos() * percentage / cores, limitInNanosecondsPerCore);
         assertEquals(Duration.ofSeconds(15).toNanos() / cores, limitInNanosecondsPerCore);
 
         // Stop the CPU leak again
-        CPUUsageManager.stop();
-        assertTrue(CPUUsageManager.taskExecutor.isEmpty());
-        assertFalse(CPUUsageManager.status.limitsPresent());
+        manager.stop();
+        assertTrue(manager.taskExecutor.isEmpty());
+        assertFalse(manager.status.limitsPresent());
     }
 
     @Test
@@ -76,25 +79,25 @@ public final class CPUUsageTest {
 
         // Normal case 2: Require ({100*number of cores}-constant)% CPU for all cores combined (i.e. 800%-50%)
         // (at least two cores must be present) for an interval of 30 seconds
-        CPUUsageManager.requireCPU(new CPUUsage(ChronoUnit.SECONDS.name(), 30, maxPercentage - 50));
-        assertTrue(CPUUsageManager.status.limitsPresent());
+        manager.requireCPU(new CPUUsage(ChronoUnit.SECONDS.name(), 30, maxPercentage - 50));
+        assertTrue(manager.status.limitsPresent());
 
         // Normal case 3: exactly ({100*number of cores}-1)% CPU has been requested - valid
-        CPUUsageManager.requireCPU(new CPUUsage(ChronoUnit.SECONDS.name(), 30, maxPercentage - 1));
-        assertTrue(CPUUsageManager.status.limitsPresent());
+        manager.requireCPU(new CPUUsage(ChronoUnit.SECONDS.name(), 30, maxPercentage - 1));
+        assertTrue(manager.status.limitsPresent());
 
         // Edge case: exactly {100*number of cores}% CPU has been requested - fail silently
-        CPUUsageManager.requireCPU(new CPUUsage(ChronoUnit.SECONDS.name(), 30, maxPercentage));
-        assertFalse(CPUUsageManager.status.limitsPresent());
+        manager.requireCPU(new CPUUsage(ChronoUnit.SECONDS.name(), 30, maxPercentage));
+        assertFalse(manager.status.limitsPresent());
 
         // Error case: more memory requested than possible - fail silently
-        CPUUsageManager.requireCPU(new CPUUsage(ChronoUnit.SECONDS.name(), 30, maxPercentage + 1));
-        assertFalse(CPUUsageManager.status.limitsPresent());
+        manager.requireCPU(new CPUUsage(ChronoUnit.SECONDS.name(), 30, maxPercentage + 1));
+        assertFalse(manager.status.limitsPresent());
 
         // Stop the CPU leak again
-        CPUUsageManager.stop();
-        assertTrue(CPUUsageManager.taskExecutor.isEmpty());
-        assertFalse(CPUUsageManager.status.limitsPresent());
+        manager.stop();
+        assertTrue(manager.taskExecutor.isEmpty());
+        assertFalse(manager.status.limitsPresent());
     }
 
     private void checkDefaultUsage(CPUUsage usage) {
