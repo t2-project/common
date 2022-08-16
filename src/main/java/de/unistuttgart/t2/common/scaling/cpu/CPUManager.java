@@ -74,7 +74,7 @@ public final class CPUManager {
     /**
      * Occupies one core completely for {@link CPUUsage#limitInNanosecondsPerCore()} nanoseconds.<br>
      * Callers must ensure to call this method after every {@link CPUUsage#getInterval()}, so that the minimally
-     * required CPU usage is {@link CPUUsage#getMinCPUUsage()}.
+     * required CPU usage is {@link CPUUsage#getMinCPUUsagePerCore()}.
      */
     private void simulateWork() {
         long busyTime = status.limitInNanosecondsPerCore();

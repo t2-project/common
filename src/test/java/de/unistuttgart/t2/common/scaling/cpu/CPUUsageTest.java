@@ -27,19 +27,19 @@ public final class CPUUsageTest {
         CPUUsageRequest test = new CPUUsageRequest();
 
         // Firstly, test that the default interval length is set when nothing has been given
-        checkDefaultUsage(test.convert());
+        checkDefaultUsage(test.convertFromRatio());
 
         // Secondly, test that an invalid time unit behaves the same as a not given time unit
         test.timeUnit = "abcdefghijklmnopqrstuvwxyz";
-        checkDefaultUsage(test.convert());
+        checkDefaultUsage(test.convertFromRatio());
 
         // Thirdly, test that a completely valid object is parsed as intended
         test.timeUnit = ChronoUnit.HOURS.name();
         test.intervalLength = 1L;
         test.cpuPercentage = 100 * 0.25 * Runtime.getRuntime().availableProcessors();
-        CPUUsage parsed = test.convert();
+        CPUUsage parsed = test.convertFromRatio();
         assertEquals(parsed.interval, Duration.of(1, ChronoUnit.HOURS));
-        assertEquals(parsed.minCPUUsage, test.cpuPercentage);
+        assertEquals(parsed.minCPUUsageTotal, test.cpuPercentage);
     }
 
     /**
@@ -77,21 +77,29 @@ public final class CPUUsageTest {
         assumeTrue(cores > 1, "Cannot execute multi core test with only 1 core");
         final double maxPercentage = cores * 100;
 
-        // Normal case 2: Require ({100*number of cores}-constant)% CPU for all cores combined (i.e. 800%-50%)
+        // Normal case 2: Require ({number of cores}-constant)% CPU for all cores combined (i.e. 800%-50%)
         // (at least two cores must be present) for an interval of 30 seconds
-        manager.requireCPU(new CPUUsage(ChronoUnit.SECONDS.name(), 30, maxPercentage - 50));
+        manager.requireCPU(new CPUUsage(ChronoUnit.SECONDS.name(), 30, cores - 0.5));
+        assertTrue(manager.status.limitsPresent());
+        manager.requireCPU(new CPUUsage(ChronoUnit.SECONDS.name(), 30, maxPercentage - 50, d -> {}, true));
         assertTrue(manager.status.limitsPresent());
 
         // Normal case 3: exactly ({100*number of cores}-1)% CPU has been requested - valid
-        manager.requireCPU(new CPUUsage(ChronoUnit.SECONDS.name(), 30, maxPercentage - 1));
+        manager.requireCPU(new CPUUsage(ChronoUnit.SECONDS.name(), 30, cores - Double.MIN_NORMAL, d -> {}, true));
+        assertTrue(manager.status.limitsPresent());
+        manager.requireCPU(new CPUUsage(ChronoUnit.SECONDS.name(), 30, maxPercentage - 1, d -> {}, true));
         assertTrue(manager.status.limitsPresent());
 
         // Edge case: exactly {100*number of cores}% CPU has been requested - fail silently
-        manager.requireCPU(new CPUUsage(ChronoUnit.SECONDS.name(), 30, maxPercentage));
+        manager.requireCPU(new CPUUsage(ChronoUnit.SECONDS.name(), 30, cores));
+        assertFalse(manager.status.limitsPresent());
+        manager.requireCPU(new CPUUsage(ChronoUnit.SECONDS.name(), 30, maxPercentage, d -> {}, true));
         assertFalse(manager.status.limitsPresent());
 
         // Error case: more memory requested than possible - fail silently
-        manager.requireCPU(new CPUUsage(ChronoUnit.SECONDS.name(), 30, maxPercentage + 1));
+        manager.requireCPU(new CPUUsage(ChronoUnit.SECONDS.name(), 30, cores + 1));
+        assertFalse(manager.status.limitsPresent());
+        manager.requireCPU(new CPUUsage(ChronoUnit.SECONDS.name(), 30, maxPercentage + 1, d -> {}, true));
         assertFalse(manager.status.limitsPresent());
 
         // Stop the CPU leak again
@@ -102,8 +110,7 @@ public final class CPUUsageTest {
 
     private void checkDefaultUsage(CPUUsage usage) {
         assertEquals(Duration.of(CPUUsage.DEFAULT_INTERVAL_LENGTH, CPUUsage.DEFAULT_TIME_UNIT), usage.interval);
-        assertEquals(CPUUsage.DEFAULT_REQUESTED_CPU_PERCENTAGE, usage.minCPUUsage);
+        assertEquals(CPUUsage.DEFAULT_REQUESTED_CPU_PERCENTAGE, usage.minCPUUsageTotal);
         assertFalse(usage.limitsPresent());
-        assertThrows(IllegalStateException.class, usage::limitInNanosecondsPerCore);
     }
 }

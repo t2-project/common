@@ -54,18 +54,36 @@ public final class MemoryLeaker implements HandlerInterceptor {
     }
 
     /**
-     * Changes the size of the memory leak: values {@code <= 0} mean no memory leak, values {@code 0 < x < 1} are the
-     * numeric representation of the size of the memory leak (0.5 for example means "use half of all available memory"),
-     * values {@code 1 <= x < 100} are regarded as human percentages (so 50.7 will have the same effect as passing
-     * 0.507).<br>
-     * {@code 0} disables the memory leak without clearing the potentially already allocated memory.
+     * Changes the size of the memory leak: values {@code < 0} clear the memory leak.<br>
+     * {@code 0} disables the memory leak without clearing the potentially already allocated memory.<br>
+     * {@code newPercentage ∈ (0.0, 1.0)} is the mathematical ratio of the memory leak ({@code 0.5} for example
+     * means "use half of all available memory").
      *
      * @param newPercentage the minimal percentage of memory to use
-     * @throws ResponseStatusException (400) if the percentage is invalid
-     * @see Percentage#fromRealPercentage(double, java.util.function.DoubleConsumer)
+     * @throws ResponseStatusException (400) if {@code newPercentage >= 1.0}
+     * @see Percentage#validateMathematicalRatio(double, java.util.function.DoubleConsumer)
      */
     public static void changeExpectedMemoryPercentage(double newPercentage) {
-        expectedMemoryPercentage = Percentage.fromRealPercentage(newPercentage, invalid -> {
+        expectedMemoryPercentage = Percentage.validateMathematicalRatio(newPercentage, invalid -> {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                String.format("Cannot request memory above 1.0 or below 0.0. You requested %f (%.2f%%).", invalid,
+                    invalid * 100));
+        });
+        adaptMemory();
+    }
+
+    /**
+     * Changes the size of the memory leak: values {@code < 0} clear the memory leak.<br>
+     * {@code 0} disables the memory leak without clearing the potentially already allocated memory.<br>
+     * {@code newPercentage ∈ (0.0, 100.0)} is the human percentage of the memory leak ({@code 50.0} for example means
+     * "use half of all available memory").
+     *
+     * @param newPercentage the minimal percentage of memory to use
+     * @throws ResponseStatusException (400) if {@code newPercentage >= 100.0}
+     * @see Percentage#fromHumanPercentage(double, java.util.function.DoubleConsumer)
+     */
+    public static void changeExpectedMemoryFromHumanPercentage(double newPercentage) {
+        expectedMemoryPercentage = Percentage.fromHumanPercentage(newPercentage, invalid -> {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                 String.format("Cannot request memory above 100%% or below 0%%. You requested %.2f%%.", invalid));
         });

@@ -4,8 +4,9 @@ import javax.validation.Valid;
 
 import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import de.unistuttgart.t2.common.scaling.cpu.*;
 import de.unistuttgart.t2.common.scaling.memory.*;
@@ -42,18 +43,28 @@ public class AutoscalingController {
         logger.warn("Blocked all non-autoscaling routes");
     }
 
-    @Operation(summary = "Ensures that consistently at least {memory}% is used", description = "Supports both mathematical percentages ( {memory} ∈ [0, 1), i.e. 0.052 = 5.2% ), and  human percentages ( {memory} ∈ [1, 100), i.e. 50.2 = 50.2%).", tags = "Memory")
+    @Operation(summary = "Ensures that consistently at least (100 * {memory})% memory is used", description = "{memory} must be a mathematical ratio ( {memory} ∈ (-∞, 1.0), i.e. 0.052 = 5.2% ), 0 disables the leak, negative values clear the leak.", tags = "Memory")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Successfully demanded a memory usage of at least {memory}%"),
-        @ApiResponse(responseCode = "400", description = "{memory} >= 100.0 || {memory} < 0.0") })
-    @PostMapping("/autoscaling/require-memory/{memory}percent")
+        @ApiResponse(responseCode = "400", description = "{memory} >= 1.0") })
+    @PostMapping("/autoscaling/require-memory/ratio-{memory}")
     @ResponseBody
     public MemoryInfo requireMemory(@PathVariable(name = "memory") double memory) {
         MemoryLeaker.changeExpectedMemoryPercentage(memory);
+        logger.warn("Required {}% memory", 100 * memory);
+        return reportMemory();
+    }
+
+    @Operation(summary = "Ensures that consistently at least {memory}% is used", description = "{memory} must be a human percentage ( {memory} ∈ (-∞, 100), i.e. 50.2 = 50.2%), 0 disables the leak, negative values clear the leak.", tags = "Memory")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Successfully demanded a memory usage of at least {memory}%"),
+        @ApiResponse(responseCode = "400", description = "{memory} >= 100.0") })
+    @PostMapping("/autoscaling/require-memory/{memory}-percent")
+    @ResponseBody
+    public MemoryInfo requireMemoryFromHumanPercentage(@PathVariable(name = "memory") double memory) {
+        MemoryLeaker.changeExpectedMemoryFromHumanPercentage(memory);
         logger.warn("Required {}% memory", memory);
-        final MemoryInfo status = new MemoryInfo();
-        logger.info("Memory stats: {}", status);
-        return status;
+        return reportMemory();
     }
 
     @Operation(summary = "Clear the memory leak if it exists", description = "Let's the service return to its normal memory usage.", tags = "Memory")
@@ -63,9 +74,7 @@ public class AutoscalingController {
     public MemoryInfo clearMemoryLeak() {
         MemoryLeaker.clearMemoryLeak();
         logger.info("Cleared memory leak");
-        final MemoryInfo status = new MemoryInfo();
-        logger.info("Memory stats: {}", status);
-        return status;
+        return reportMemory();
     }
 
     @Operation(summary = "Disable adding more unneeded memory", description = "Needed when wanting to keep an already existing memory leak without increasing the leaked amount of memory once the GC frees some other memory.", tags = "Memory")
@@ -75,9 +84,7 @@ public class AutoscalingController {
     public MemoryInfo disableMemoryLeak() {
         MemoryLeaker.changeExpectedMemoryPercentage(0.0);
         logger.warn("Locked memory leak to its current size");
-        final MemoryInfo status = new MemoryInfo();
-        logger.info("Memory stats: {}", status);
-        return status;
+        return reportMemory();
     }
 
     @Operation(summary = "Show current memory information", description = "Returns how many bytes are currently used, free, and in total vailable.", tags = "Memory")
@@ -86,14 +93,13 @@ public class AutoscalingController {
     @ResponseBody
     public MemoryInfo getMemoryInformation() {
         logger.debug("Retrieved current memory information");
-        final MemoryInfo status = new MemoryInfo();
-        logger.debug("Memory stats: {}", status);
-        return status;
+        return reportMemory();
     }
 
     @Operation(summary = "Ensures that consistently at least {cpu}% is used", description = "time unit = values known to https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/ChronoUnit.html#valueOf(java.lang.String), case insensitive, default seconds.\n"
         + "CPU percentage defines the percentage of CPU to use at all times, for all cores combined.\n"
-        + "Supports both mathematical percentages ( {cpu percentage} ∈ [0, 1), i.e. 0.052 = 5.2% ), and  human percentages ( {cpu percentage} ∈ [1, 100 * {number of available cores}), i.e. 750.5 = 750.5% (full load for 7 cores and a half))."
+        + "{cpu percentage} must be a mathematical ratio ( {cpu percentage} ∈ (-∞, 1.0 * {number of available cores}), i.e. 7.5 = 750.5% (full load for 7 cores and a half)).\n"
+        + "{cpu percentage} <= 0 disables the CPU waste.\n"
         + "The mechanism works by using 100% per core for an interval of length {requested CPU percentage} * {interval length} / {number of cores} periodically.\n"
         + "Interval length decides how long the interval is in {time unit}. Default 10.", tags = "CPU")
     @ApiResponses(value = {
@@ -102,10 +108,31 @@ public class AutoscalingController {
     @ResponseBody
     public CPUUsage requireCPU(@RequestBody @Valid CPUUsageRequest cpu) {
         logger.warn("Got a request to adapt CPU Usage to {}", cpu);
-        cpuManager.requireCPU(cpu.convert());
-        final CPUUsage status = cpuManager.getCurrentStatus();
-        logger.info("Current CPU Usage is {}", status);
-        return status;
+        cpu.setErrorHandler(d -> {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                String.format("Cannot require %d%% CPU.", d * 100));
+        });
+        cpuManager.requireCPU(cpu.convertFromRatio());
+        return reportCPU();
+    }
+
+    @Operation(summary = "Ensures that consistently at least {cpu}% is used", description = "time unit = values known to https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/temporal/ChronoUnit.html#valueOf(java.lang.String), case insensitive, default seconds.\n"
+        + "CPU percentage defines the percentage of CPU to use at all times, for all cores combined.\n"
+        + "{cpu percentage} must be a human percentage ( {cpu percentage} ∈ (-∞, 100.0 * {number of available cores}), i.e. 750.5 = 750.5% (full load for 7 cores and a half)).\n"
+        + "{cpu percentage} <= 0 disables the CPU waste.\n"
+        + "The mechanism works by using 100% per core for an interval of length {requested CPU percentage} * {interval length} / {number of cores} periodically.\n"
+        + "Interval length decides how long the interval is in {time unit}. Default 10.", tags = "CPU")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Successfully demanded a CPU usage of at least {cpu}%") })
+    @PostMapping("/autoscaling/require-cpu-from-humans")
+    @ResponseBody
+    public CPUUsage requireCPUFromHumanPercent(@RequestBody @Valid CPUUsageRequest cpu) {
+        logger.warn("Got a request to adapt CPU Usage from human limits to {}", cpu);
+        cpu.setErrorHandler(d -> {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("Cannot require %d%% CPU.", d));
+        });
+        cpuManager.requireCPU(cpu.convertFromHumans());
+        return reportCPU();
     }
 
     @Operation(summary = "Removes the requirement to use a minimum of CPU at all times", tags = "CPU")
@@ -115,9 +142,7 @@ public class AutoscalingController {
     public CPUUsage removeCPURequirements() {
         logger.info("Got a request to no longer inflate CPU usage artificially");
         cpuManager.stop();
-        final CPUUsage status = cpuManager.getCurrentStatus();
-        logger.info("Current CPU Usage is {}", status);
-        return status;
+        return reportCPU();
     }
 
     @Operation(summary = "Show current CPU information", description = "Returns how many cores are vailable, what interval is used and .", tags = "CPU")
@@ -126,8 +151,18 @@ public class AutoscalingController {
     @ResponseBody
     public CPUUsage getCPUInformation() {
         logger.debug("Retrieved current CPU information");
+        return reportCPU();
+    }
+
+    private MemoryInfo reportMemory() {
+        final MemoryInfo status = new MemoryInfo();
+        logger.info("Memory stats: {}", status);
+        return status;
+    }
+
+    private CPUUsage reportCPU() {
         final CPUUsage status = cpuManager.getCurrentStatus();
-        logger.debug("Memory stats: {}", status);
+        logger.info("Current CPU Usage is {}", status);
         return status;
     }
 }

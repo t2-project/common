@@ -2,6 +2,7 @@ package de.unistuttgart.t2.common.scaling.cpu;
 
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
+import java.util.function.DoubleConsumer;
 
 /**
  * DTO in disguise.
@@ -24,8 +25,12 @@ public final class CPUUsageRequest {
     Long intervalLength;
     Double cpuPercentage;
 
+    transient DoubleConsumer errorHandler; // for handling errors while converting the CPU percentage
+
     /**
-     * @return this object converted to the most fitting representation of a {@link CPUUsage}.<br>
+     * @return this object converted to the most fitting representation of a {@link CPUUsage} when interpreting
+     *         {@link #cpuPercentage} as a mathematical ratio
+     *         ({@code 0.0 to 1.0 * number of cores instead of 0.0 [%] to 100.0 * number of cores [%]}).<br>
      *         Fallbacks for missing values are:
      *         <ul>
      *         <li>{@link CPUUsage#DEFAULT_TIME_UNIT} if no time unit is given</li>
@@ -33,17 +38,39 @@ public final class CPUUsageRequest {
      *         <li>{@link CPUUsage#DEFAULT_REQUESTED_CPU_PERCENTAGE} if no requested CPU usage is given</li>
      *         </ul>
      * @since 1.2.0
+     * @see #convertFromHumans()
      */
-    public CPUUsage convert() {
-        ChronoUnit unit;
-        try {
-            unit = ChronoUnit.valueOf(timeUnit.toUpperCase());
-        } catch (NullPointerException | IllegalArgumentException e) {
-            unit = CPUUsage.DEFAULT_TIME_UNIT;
-        }
+    public CPUUsage convertFromRatio() {
+        return new CPUUsage(convertUnit().name(),
+            Objects.requireNonNullElse(intervalLength, CPUUsage.DEFAULT_INTERVAL_LENGTH),
+            Objects.requireNonNullElse(cpuPercentage, CPUUsage.DEFAULT_REQUESTED_CPU_PERCENTAGE), errorHandler);
+    }
 
-        return new CPUUsage(unit.name(), Objects.requireNonNullElse(intervalLength, CPUUsage.DEFAULT_INTERVAL_LENGTH),
-            Objects.requireNonNullElse(cpuPercentage, CPUUsage.DEFAULT_REQUESTED_CPU_PERCENTAGE));
+    /**
+     * @return this object converted to the most fitting representation of a {@link CPUUsage} when interpreting
+     *         {@link #cpuPercentage} as a human percentage
+     *         ({@code 0.0 [%] to 100.0 * number of cores [%] instead of 0.0 to 1.0 * number of cores}).<br>
+     *         Fallbacks for missing values are:
+     *         <ul>
+     *         <li>{@link CPUUsage#DEFAULT_TIME_UNIT} if no time unit is given</li>
+     *         <li>{@link CPUUsage#DEFAULT_INTERVAL_LENGTH} if no interval length is given</li>
+     *         <li>{@link CPUUsage#DEFAULT_REQUESTED_CPU_PERCENTAGE} if no requested CPU usage is given</li>
+     *         </ul>
+     * @since 1.2.0
+     * @see #convertFromRatio()
+     */
+    public CPUUsage convertFromHumans() {
+        return new CPUUsage(convertUnit().name(),
+            Objects.requireNonNullElse(intervalLength, CPUUsage.DEFAULT_INTERVAL_LENGTH),
+            Objects.requireNonNullElse(cpuPercentage, CPUUsage.DEFAULT_REQUESTED_CPU_PERCENTAGE), errorHandler, true);
+    }
+
+    private ChronoUnit convertUnit() {
+        try {
+            return ChronoUnit.valueOf(timeUnit.toUpperCase());
+        } catch (NullPointerException | IllegalArgumentException e) {
+            return CPUUsage.DEFAULT_TIME_UNIT;
+        }
     }
 
     @Override
@@ -74,5 +101,13 @@ public final class CPUUsageRequest {
 
     public void setCpuPercentage(Double cpuPercentage) {
         this.cpuPercentage = cpuPercentage;
+    }
+
+    public DoubleConsumer getErrorHandler() {
+        return errorHandler;
+    }
+
+    public void setErrorHandler(DoubleConsumer errorHandler) {
+        this.errorHandler = errorHandler;
     }
 }
