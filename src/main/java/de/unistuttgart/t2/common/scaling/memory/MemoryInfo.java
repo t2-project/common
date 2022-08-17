@@ -1,4 +1,4 @@
-package de.unistuttgart.t2.common.scaling;
+package de.unistuttgart.t2.common.scaling.memory;
 
 /**
  * Data class to query the current memory statistics.
@@ -8,7 +8,6 @@ package de.unistuttgart.t2.common.scaling;
  * @author Leon Hofmeister
  * @since 1.1
  */
-@SuppressWarnings("unused")
 public final class MemoryInfo {
 
     private final long used, free, total, max;
@@ -21,5 +20,31 @@ public final class MemoryInfo {
         free = runtime.freeMemory();
         used = total - free;
         usedRatio = (double) used / total;
+    }
+
+    public long getUsed() {
+        return used;
+    }
+
+    public long getFree() {
+        return free;
+    }
+
+    public long getTotal() {
+        return total;
+    }
+
+    public long getMax() {
+        return max;
+    }
+
+    public double getUsedRatio() {
+        return usedRatio;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("MemoryInfo [used=%s, free=%s, total=%s, max=%s, usedRatio=%s]", used, free, total, max,
+            usedRatio);
     }
 }
