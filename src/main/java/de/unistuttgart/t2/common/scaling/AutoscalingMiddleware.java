@@ -1,12 +1,13 @@
 package de.unistuttgart.t2.common.scaling;
 
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.*;
 import org.springframework.web.servlet.config.annotation.*;
 
 import de.unistuttgart.t2.common.scaling.memory.MemoryLeaker;
 import de.unistuttgart.t2.common.scaling.request.RequestDenier;
 
 @Configuration
+@ComponentScan
 @EnableWebMvc
 public class AutoscalingMiddleware implements WebMvcConfigurer {
 
