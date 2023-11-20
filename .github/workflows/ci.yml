@@ -13,9 +13,10 @@ jobs:
     - name: check out common
       uses: actions/checkout@master
     - name: set up jdk
-      uses: actions/setup-java@v2
+      uses: actions/setup-java@v3
       with:
-        distribution: 'adopt'
-        java-version: '11'
+        distribution: 'temurin'
+        java-version: '17'
+        cache: 'maven'
     - name: verify common
       run: mvn clean verify

@@ -1,6 +1,7 @@
 package de.unistuttgart.t2.common;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * A single product in the store.

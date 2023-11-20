@@ -1,6 +1,7 @@
 package de.unistuttgart.t2.common;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Request to place a reservation on a product.

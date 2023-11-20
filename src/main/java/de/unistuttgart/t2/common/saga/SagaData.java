@@ -1,6 +1,7 @@
 package de.unistuttgart.t2.common.saga;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * All the Information that any saga participant might possibly need.

@@ -4,17 +4,17 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.4.3</version>
+        <version>3.1.5</version>
         <relativePath /> <!-- lookup parent from repository -->
     </parent>
 
     <groupId>de.unistuttgart.t2</groupId>
     <artifactId>common</artifactId>
-    <version>1.2-SNAPSHOT</version>
+    <version>${env.T2_COMMON_VERSION}</version>
 
     <properties>
-        <maven.compiler.source>1.11</maven.compiler.source>
-        <maven.compiler.target>1.11</maven.compiler.target>
+        <maven.compiler.source>1.17</maven.compiler.source>
+        <maven.compiler.target>1.17</maven.compiler.target>
     </properties>
 
     <dependencies>
@@ -26,8 +26,8 @@
         <!-- for openAPI and swagger for the common routes-->
         <dependency>
             <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-ui</artifactId>
-            <version>${SPRINGDOC_VERSION}</version>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>${env.T2_SPRINGDOC_VERSION}</version>
         </dependency>
 
         <!-- SAGA THINGS -->
@@ -35,17 +35,17 @@
         <dependency>
             <groupId>io.eventuate.tram.core</groupId>
             <artifactId>eventuate-tram-spring-events</artifactId>
-            <version>${TRAM_VERSION}</version>
+            <version>${env.T2_TRAM_VERSION}</version>
         </dependency>
         <dependency>
             <groupId>io.eventuate.tram.core</groupId>
             <artifactId>eventuate-tram-spring-commands</artifactId>
-            <version>${TRAM_VERSION}</version>
+            <version>${env.T2_TRAM_VERSION}</version>
         </dependency>
         <dependency>
             <groupId>io.eventuate.tram.core</groupId>
             <artifactId>eventuate-tram-spring-messaging</artifactId>
-            <version>${TRAM_VERSION}</version>
+            <version>${env.T2_TRAM_VERSION}</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -61,8 +61,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>11</source>
-                    <target>11</target>
+                    <source>17</source>
+                    <target>17</target>
                 </configuration>
             </plugin>
         </plugins>

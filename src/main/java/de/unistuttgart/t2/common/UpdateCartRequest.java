@@ -1,8 +1,12 @@
 package de.unistuttgart.t2.common;
 
-import java.util.*;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.fasterxml.jackson.annotation.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Request to update the content of a users cart.
@@ -18,9 +22,20 @@ public final class UpdateCartRequest {
     @JsonProperty("content")
     private Map<String, Integer> difference;
 
-    @JsonCreator
+    // Default no-argument constructor
+    public UpdateCartRequest() {
+    }
+
     public UpdateCartRequest(Map<String, Integer> content) {
         difference = content;
+    }
+
+    @JsonAnySetter
+    public void addContent(String key, Integer value) {
+        if (difference == null) {
+            difference = new HashMap<>();
+        }
+        difference.put(key, value);
     }
 
     public void setContent(Map<String, Integer> content) {

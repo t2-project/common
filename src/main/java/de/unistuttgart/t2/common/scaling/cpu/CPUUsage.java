@@ -1,11 +1,11 @@
 package de.unistuttgart.t2.common.scaling.cpu;
 
+import de.unistuttgart.t2.common.scaling.Percentage;
+
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 import java.util.function.DoubleConsumer;
-
-import de.unistuttgart.t2.common.scaling.Percentage;
 
 /**
  * Data class to query the current CPU statistics.

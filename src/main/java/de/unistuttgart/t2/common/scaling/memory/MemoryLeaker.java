@@ -1,15 +1,14 @@
 package de.unistuttgart.t2.common.scaling.memory;
 
-import java.time.Instant;
-import java.util.HashSet;
-
-import javax.servlet.http.*;
-
+import de.unistuttgart.t2.common.scaling.Percentage;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import de.unistuttgart.t2.common.scaling.Percentage;
+import java.time.Instant;
+import java.util.HashSet;
 
 /**
  * Allows to create a memory leak of arbitrary size.

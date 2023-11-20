@@ -1,12 +1,12 @@
 package de.unistuttgart.t2.common.scaling.cpu;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
+import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * Tests that allocating extra memory works as intended.

@@ -1,8 +1,9 @@
 package de.unistuttgart.t2.common.scaling.memory;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests that allocating extra memory works as intended.

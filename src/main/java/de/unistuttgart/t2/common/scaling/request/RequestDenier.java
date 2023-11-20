@@ -1,7 +1,7 @@
 package de.unistuttgart.t2.common.scaling.request;
 
-import javax.servlet.http.*;
-
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.HandlerInterceptor;
 
