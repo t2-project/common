@@ -1,18 +1,22 @@
 package de.unistuttgart.t2.common.scaling;
 
-import javax.validation.Valid;
-
-import org.slf4j.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-
-import de.unistuttgart.t2.common.scaling.cpu.*;
-import de.unistuttgart.t2.common.scaling.memory.*;
+import de.unistuttgart.t2.common.scaling.cpu.CPUManager;
+import de.unistuttgart.t2.common.scaling.cpu.CPUUsage;
+import de.unistuttgart.t2.common.scaling.cpu.CPUUsageRequest;
+import de.unistuttgart.t2.common.scaling.memory.MemoryInfo;
+import de.unistuttgart.t2.common.scaling.memory.MemoryLeaker;
 import de.unistuttgart.t2.common.scaling.request.RequestDenier;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.*;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Contains the routes that (deterministically) influence the scaling behavior.
