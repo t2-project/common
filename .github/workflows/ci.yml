@@ -11,12 +11,12 @@ jobs:
          vi setenv.sh -c ':%s/^export //' -c ':%s/\(.*\)#.*/\1/' -c ':%s/\s*$//g' -c ':wq' # Strip out 'export ' at the beginning, comments, and trailing whitespace
          cat setenv.sh >> $GITHUB_ENV
     - name: check out common
-      uses: actions/checkout@master
+      uses: actions/checkout@v4
     - name: set up jdk
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
         java-version: '17'
         cache: 'maven'
-    - name: verify common
+    - name: Maven verify common
       run: mvn clean verify
