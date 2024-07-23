@@ -5,8 +5,11 @@ jobs:
     name: test
     runs-on: ubuntu-latest
     steps:
-    - name: check out common
+    - name: check out parent
       uses: actions/checkout@v4
+      with:
+        repository: t2-project/microservices
+        submodules: true
     - name: set up jdk
       uses: actions/setup-java@v4
       with:
@@ -14,4 +17,6 @@ jobs:
         java-version: '17'
         cache: 'maven'
     - name: Maven verify common
-      run: mvn clean verify
+      run: |
+        chmod +x mvnw
+        ./mvnw --projects common --also-make clean verify
