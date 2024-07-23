@@ -2,20 +2,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.4</version>
-        <relativePath /> <!-- lookup parent from repository -->
+        <groupId>de.unistuttgart.t2</groupId>
+        <artifactId>microservices</artifactId>
+        <version>${revision}</version>
     </parent>
 
-    <groupId>de.unistuttgart.t2</groupId>
     <artifactId>common</artifactId>
-    <version>${env.T2_COMMON_VERSION}</version>
-
-    <properties>
-        <maven.compiler.source>1.17</maven.compiler.source>
-        <maven.compiler.target>1.17</maven.compiler.target>
-    </properties>
+    <name>common</name>
+    <packaging>jar</packaging>
 
     <dependencies>
         <!-- To provide the common autoscaling routes/ behaviors for all implementing packages -->
@@ -27,25 +21,20 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>${env.T2_SPRINGDOC_VERSION}</version>
         </dependency>
 
         <!-- SAGA THINGS -->
-        <!-- https://mvnrepository.com/artifact/io.eventuate.tram.core/eventuate-tram-spring-events -->
         <dependency>
             <groupId>io.eventuate.tram.core</groupId>
             <artifactId>eventuate-tram-spring-events</artifactId>
-            <version>${env.T2_TRAM_VERSION}</version>
         </dependency>
         <dependency>
             <groupId>io.eventuate.tram.core</groupId>
             <artifactId>eventuate-tram-spring-commands</artifactId>
-            <version>${env.T2_TRAM_VERSION}</version>
         </dependency>
         <dependency>
             <groupId>io.eventuate.tram.core</groupId>
             <artifactId>eventuate-tram-spring-messaging</artifactId>
-            <version>${env.T2_TRAM_VERSION}</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -54,17 +43,13 @@
         </dependency>
     </dependencies>
 
-
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>17</source>
-                    <target>17</target>
-                </configuration>
             </plugin>
         </plugins>
     </build>
+
 </project>
