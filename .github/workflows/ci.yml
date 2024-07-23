@@ -10,6 +10,10 @@ jobs:
       with:
         repository: t2-project/microservices
         submodules: true
+    - name: Ensure to use latest version
+      run: |
+        git submodule update --init --recursive
+        git submodule update --recursive --remote
     - name: set up jdk
       uses: actions/setup-java@v4
       with:
